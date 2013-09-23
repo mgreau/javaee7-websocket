@@ -2,9 +2,20 @@
 Maxime Gréaun <@mgreau>
 :imagesdir: .
 
-This project demonstrates the use of the WebSocket Java EE 7 specification
+This project demonstrates how to use the WebSocket Protocol with Java API for WebSocket (from Java EE 7 specifications) and The WebSocket Javascript API (from W3C)
+
+== Install
+
+* start wildfly:: *$JBOSS_HOME/standalone.sh*
+
+* clone this project:: *git clone https://github.com/mgreau/javaee7-websocket*
+
+* build the war and deploy it automatically with maven:: *mvn clean package jboss-as:deploy* 
 
 
-== Screenshot
+== Demo / Screenshot
+* Online demo : http://wildfly-mgreau.rhcloud.com/usopen/
 
 image::html5_websocket.png[Screenshot of the WebSocket Java EE 7 demo]
+
+image::html5_websocket_android.png[Screenshot of the WebSocket Java EE 7 demo on mobile]
