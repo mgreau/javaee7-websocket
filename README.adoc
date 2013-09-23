@@ -1,0 +1,10 @@
+= WebSocket JavaEE 7 Demo
+Maxime Gréaun <@mgreau>
+:imagesdir: ../
+
+This project demonstrates the use of the WebSocket Java EE 7 specification
+
+
+== Screenshot
+
+image::html5_websocket.png[Screenshot of the WebSocket Java EE 7 demo]
