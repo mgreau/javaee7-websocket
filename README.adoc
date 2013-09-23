@@ -18,6 +18,9 @@ This project demonstrates how to use the WebSocket Protocol with Java API for We
 
    mvn clean package jboss-as:deploy
 
+. Launch the browser :
+
+   http://localhost:8080/usopen/
 
 == Demo / Screenshot
 * Online demo : http://wildfly-mgreau.rhcloud.com/usopen/
