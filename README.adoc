@@ -6,11 +6,17 @@ This project demonstrates how to use the WebSocket Protocol with Java API for We
 
 == Install
 
-* start wildfly:: *$JBOSS_HOME/standalone.sh*
+. Start wildfly : 
 
-* clone this project:: *git clone https://github.com/mgreau/javaee7-websocket*
+   $JBOSS_HOME/bin/standalone.sh
+   
+. Clone this project :  
 
-* build the war and deploy it automatically with maven:: *mvn clean package jboss-as:deploy* 
+  git clone https://github.com/mgreau/javaee7-websocket
+  
+. Build the war and deploy it automatically with maven : 
+
+   mvn clean package jboss-as:deploy
 
 
 == Demo / Screenshot
