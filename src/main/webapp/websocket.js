@@ -1,8 +1,8 @@
 var wsUrl;
 if (window.location.protocol == 'https:') {
-	wsUrl = 'wss://' + window.location.host + ':8443/usopen/matches/1234';
+	wsUrl = 'wss://' + window.location.host + ':8443/'+ window.location.pathname +'matches/1234';
 } else {
-	wsUrl = 'ws://' + window.location.host + ':8000/usopen/matches/1234';
+	wsUrl = 'ws://' + window.location.host + window.location.pathname +'matches/1234';
 }
 //wsUrl = 'ws://localhost:8080/usopen/matches/1234';
 
