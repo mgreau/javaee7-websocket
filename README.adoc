@@ -5,15 +5,15 @@ Maxime Gréaun <@mgreau>
 This project demonstrates how to use the WebSocket Protocol with Java API for WebSocket (from Java EE 7 specifications) and The WebSocket Javascript API (from W3C)
 
 == Install
+  
+. Clone this project :  
+
+  git clone https://github.com/mgreau/javaee7-websocket
 
 . Start wildfly : 
 
    $JBOSS_HOME/bin/standalone.sh
    
-. Clone this project :  
-
-  git clone https://github.com/mgreau/javaee7-websocket
-  
 . Build the war and deploy it automatically with maven : 
 
    mvn clean package jboss-as:deploy
