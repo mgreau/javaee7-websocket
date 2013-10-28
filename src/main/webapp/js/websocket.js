@@ -1,6 +1,6 @@
 var wsUrl;
 if (window.location.protocol == 'https:') {
-	wsUrl = 'wss://' + window.location.host + ':8443/'+ window.location.pathname +'matches/1234';
+	wsUrl = 'wss://' + window.location.host + window.location.pathname +'matches/1234';
 } else {
 	wsUrl = 'ws://' + window.location.host + window.location.pathname +'matches/1234';
 }

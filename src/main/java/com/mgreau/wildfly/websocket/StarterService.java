@@ -45,7 +45,7 @@ public class StarterService {
     			logger.log(Level.INFO, "------- RESET MATCH -----------" + m.getPlayerOneName() 
     					+ " VS " + m.getPlayerTwoName() );
     		}
-        	logger.log(Level.FINE, "------- 1 point -----------");
+        	logger.log(Level.INFO, "------- 1 point -----------");
     		if (random.nextInt(2) == 1){
         		m.playerOneScores();
         	} else {
@@ -62,4 +62,11 @@ public class StarterService {
     	}
     }
     
+    public Set<TennisMatch> getMatches(){
+    	return matches;
+    }
+    @Timeout
+    public void timeout(TimerService tseTimerService){
+          logger.log(Level.INFO, "------- TIMEOUT -----------"+tseTimerService.getTimers().size());
+        }
 }
