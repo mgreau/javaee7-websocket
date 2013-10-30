@@ -1,8 +1,11 @@
 package com.mgreau.wildfly.websocket;
 
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 public class TennisMatch {
+	
+	private static final Logger LOG = Logger.getLogger("TennisMatch");
 
 	private String key;
 	private String title;
@@ -46,6 +49,7 @@ public class TennisMatch {
 		this.p1Name = playerOneName;
 		this.p2Name = playerTwoName;
 		liveComments.append("Welcome to this match between " + p1Name + " and " + p2Name + ".");
+		LOG.info("Match started : " + title + " (" + p1Name + "-" + p2Name + ")");
 	}
 
 	public String getKey() {
@@ -282,6 +286,7 @@ public class TennisMatch {
 	        int m = cal.get(Calendar.MINUTE);
 	        int s = cal.get(Calendar.SECOND);
 		liveComments.append("\n").append(H+":"+m+":"+s).append(" - ").append(comments);
+		LOG.info(title + " (" + p1Name + "-" + p2Name + ") : " + comments);
 	}
 
 	public int getP1Sets() {

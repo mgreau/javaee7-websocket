@@ -12,7 +12,7 @@
 
 <style type="text/css">
 .sets {
-	background-color: #e5E5E5;
+	background-color: #ccc;
 }
 
 .serve {
@@ -23,21 +23,58 @@
 
 </head>
 <body>
-	<div class="container" ng-controller="MatchesCtrl">
+	<div class="container" ng-controller="AppCtrl">
 		<h2>Tennis Game Tournament - Java API for Websocket</h2>
 		<p class="lead">Basic HTML5 sample to illustrate the new Java API
 			for WebSocket (JSR 356).</p>
 
-		<div class="row" ng-repeat="match in matches">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					{{match.playerOneName}} - {{match.playerTwoName}} <span id="m1-title">{{match.title}}</span> - <span id="m1-status"
-						class="label label-success"></span>
-
-				</div>
-					
-				<div class="panel-footer">
-					<em>by <a href="https://twitter.com/mgreau">@mgreau</a></em>
+		<div class="row">
+			<div class="col-xs-6 col-md-4" ng-repeat="match in matches">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span id="m1-title">{{match.title}}</span> - <span id="m1-status"
+							class="label label-success"></span>
+	
+					</div>
+					<div class="panel-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th><a href="#" class="btn btn-primary btn-xs" ng-click="connect({{match.key}})"
+						>CONNECT TO LIVE ?</a></th>
+								<th></th>
+								<th></th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+							<td><img  alt=" {{match.playerOneName}}" src="img/{{splitForImage(match.playerOneName,0)}}.jpg">
+		 						 {{match.playerOneName}}</td>
+								<td class="sets"><h4><span id="m1-p1-set1"
+									class="label label-default">{{match.p1Set1}}</span></h4></td>
+								<td class="sets"><h4><span id="m1-p1-set2"
+									class="label label-default">{{match.p1Set2}}</span></h4></td>
+								<td class="sets"><h4><span id="m1-p1-set3"
+									class="label label-default">{{match.p1Set3}}</span></h4></td>
+							</tr>
+							<tr>
+								<td>
+									<img  alt=" {{match.playerTwoName}}" src="img/{{splitForImage(match.playerTwoName,0)}}.jpg">
+		 						 	{{match.playerTwoName}}</td>
+								<td class="sets"><span id="m1-p1-set1"
+									class="label label-warning">{{match.p2Set1}}</span></td>
+								<td class="sets"><span id="m1-p1-set2"
+									class="label label-warning">{{match.p2Set2}}</span></td>
+								<td class="sets"><span id="m1-p1-set3"
+									class="label label-warning">{{match.p2Set3}}</span></td>
+							</tr>
+						</tbody>
+					</table>
+					</div> 
+					<div class="panel-footer">
+						
+					</div>
 				</div>
 			</div>
 		</div>
