@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="myApp">
 <head>
 <title>Java EE 7 - Websocket - Wildfly 8 - OpenShit</title>
 <meta charset="UTF-8">
@@ -40,8 +40,10 @@
 					<table class="table">
 						<thead>
 							<tr>
-								<th><a href="#" class="btn btn-primary btn-xs" ng-click="connect({{match.key}})"
-						>CONNECT TO LIVE ?</a></th>
+								<th><button class="btn btn-primary btn-xs" ng-click="connect(match.key)" value="{{match.key}}">CONNECT TO LIVE ?</button> 
+								<button ng-click="disconnect()" class="btn">Close</button>
+								<button ng-click="betOnWinner()" class="btn">Max</button>
+								</th>
 								<th></th>
 								<th></th>
 								<th></th>
@@ -80,6 +82,7 @@
 		</div>
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular-resource.min.js"></script>
 	<script src="js/matches.js"></script>
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
