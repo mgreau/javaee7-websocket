@@ -2,6 +2,7 @@ var myApp = angular.module('myApp', []);
 
 myApp.factory('MatchService', function() {
 	var service = {};
+	service.ws = new Object();
 
 	service.connect = function(idMatch) {
 //		if (service.ws) {
@@ -32,7 +33,7 @@ myApp.factory('MatchService', function() {
 			service.callback(message.data);
 		};
 
-		service.ws = ws;
+		service.ws[idMatch] = ws;
 	};
 
 	service.send = function(message) {
@@ -40,8 +41,8 @@ myApp.factory('MatchService', function() {
 	};
 	
 	//Close the WebSocket connection
-	service.disconnect = function() {
-		service.ws.close();
+	service.disconnect = function(idMatch) {
+		service.ws[idMatch].close();
 	};
 
 	
@@ -79,8 +80,8 @@ function MatchCtrl($scope, MatchService) {
 		MatchService.connect(id);
 	};
 	
-	$scope.disconnect = function() {
-		MatchService.disconnect();
+	$scope.disconnect = function(id) {
+		MatchService.disconnect(id);
 	};
 
 
