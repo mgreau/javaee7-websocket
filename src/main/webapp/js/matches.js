@@ -4,23 +4,26 @@ myApp.factory('MatchService', function() {
 	var service = {};
 
 	service.connect = function(idMatch) {
-		if (service.ws) {
-			return;
-		}
+//		if (service.ws) {
+//			return;
+//		}
 
-		var wsUrl = 'ws://localhost:8080/usopen/'
+		var wsUrl = 'ws://localhost:8080/wildfly-websocket/'
 				+ 'matches/' + idMatch;
 		var ws = new WebSocket(wsUrl);
 
 		ws.onopen = function() {
+			console.log("open ws " + wsUrl);
 			service.callback("Connected to livemode");
 		};
 
 		ws.onerror = function() {
+			console.log("error ws " + wsUrl);
 			service.callback("Failed to open a connection");
 		};
 
 		ws.onclose = function() {
+			console.log("close ws " + wsUrl);
 			service.callback("Disconnected to livemode");
 		};
 
@@ -49,7 +52,22 @@ myApp.factory('MatchService', function() {
 	return service;
 });
 
-function AppCtrl($scope, MatchService, $http) {
+function AppCtrl($scope, $http) {
+	
+	$scope.splitForImage = function(string, nb) {
+		$scope.array = string.toLowerCase().split(' ');
+		return $scope.result = $scope.array[nb];
+	};
+
+	$http({
+		method : 'GET',
+		url : '/wildfly-websocket/rest/tournament/lives'
+	}).success(function(data) {
+		$scope.matches = data; // response data
+	});
+}
+
+function MatchCtrl($scope, MatchService) {
 	$scope.messages = [];
 	
 	MatchService.subscribe(function(message) {
@@ -71,16 +89,4 @@ function AppCtrl($scope, MatchService, $http) {
 		MatchService.send(msg);
 		$scope.text = "";
 	};
-
-	$scope.splitForImage = function(string, nb) {
-		$scope.array = string.toLowerCase().split(' ');
-		return $scope.result = $scope.array[nb];
-	};
-
-	$http({
-		method : 'GET',
-		url : '/usopen/rest/tournament/lives'
-	}).success(function(data) {
-		$scope.matches = data; // response data
-	});
 }
