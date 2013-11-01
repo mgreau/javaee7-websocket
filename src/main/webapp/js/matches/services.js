@@ -1,4 +1,4 @@
-app.factory('MatchWebSocketService', function() {
+app.factory('MatchWebSocketService', function($window) {
 	var service = {};
 	service.ws = new Object();
 
@@ -7,8 +7,8 @@ app.factory('MatchWebSocketService', function() {
 				&& service.ws[idMatch].readyState == WebSocket.OPEN) {
 			return;
 		}
-
-		var wsUrl = 'ws://localhost:8080/usopen/' + 'matches/' + idMatch;
+		var appPath = $window.location.pathname.split('/')[1];
+		var wsUrl = 'ws://'+ $window.location.hostname + ':' + $window.location.port + '/' + appPath + '/matches/' + idMatch;
 		var websocket = new WebSocket(wsUrl);
 		var key = idMatch;
 
@@ -58,12 +58,13 @@ app.factory('MatchWebSocketService', function() {
 	return service;
 });
 
-app.factory('MatchRESTService', function($http) {
+app.factory('MatchRESTService', function($http, $window) {
+	var appPath = $window.location.pathname.split('/')[1];
 	var myService = {
 		    async: function() {
 		      // $http returns a promise, which has a then function, which
 				// also returns a promise
-		      var promise = $http.get('/usopen/rest/tournament/lives').then(function (response) {
+		      var promise = $http.get('/'+ appPath + '/rest/tournament/lives').then(function (response) {
 		        // The then function here is an opportunity to modify the
 				// response
 		        console.log(response);
@@ -77,19 +78,3 @@ app.factory('MatchRESTService', function($http) {
 		  };
 	return myService;
 });
-	
-	
-/*	
-	// Load datas
-	$http({
-		method : 'GET',
-		url : '/'
-	}).success(function(data) {
-	    $scope.matches = [];
-		angular.forEach(data, function(m) {
-		      $scope.matches.push(m); // response data
-		    });
-	});
-	
-	return service;
-});*/

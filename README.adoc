@@ -4,6 +4,11 @@ Maxime Gréaun <@mgreau>
 
 This project demonstrates how to use the WebSocket Protocol with Java API for WebSocket (from Java EE 7 specifications) and The WebSocket Javascript API (from W3C)
 
+== Details == 
+There are 2 differents samples :
+* the first (/index.html) which handle 1 match and used only native Javascript on view side
+* the second (/matches.html) which is more complicated as it handles multiples matches and it used AngularJS on view side
+
 == Install
   
 . Clone this project :  
@@ -20,7 +25,8 @@ This project demonstrates how to use the WebSocket Protocol with Java API for We
 
 . Launch the browser :
 
-   http://localhost:8080/usopen/
+   ** 1 match : http://localhost:8080/usopen/index.html
+   ** multiples matches : http://localhost:8080/usopen/matches.html
 
 == Demo / Screenshot
 * Online demo : http://wildfly-mgreau.rhcloud.com/usopen/

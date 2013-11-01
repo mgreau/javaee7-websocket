@@ -1,8 +1,9 @@
 var wsUrl;
+var idMatch = '1234';
 if (window.location.protocol == 'https:') {
-	wsUrl = 'wss://' + window.location.host + window.location.pathname +'matches/1234';
+	wsUrl = 'wss://' + window.location.host + window.location.pathname +'matches/'+idMatch;
 } else {
-	wsUrl = 'ws://' + window.location.host + window.location.pathname +'matches/1234';
+	wsUrl = 'ws://' + window.location.host + window.location.pathname +'matches/'+idMatch;
 }
 //wsUrl = 'ws://localhost:8080/usopen/matches/1234';
 
@@ -109,17 +110,14 @@ function createWebSocket(host) {
 	}
 }
 function betMatchWinner(player) {
-	var msg = "{ \"type\" : \"betMatchWinner\", \"name\" : \"" + player + "\" }";
+	var msg = "{ \"type\" : \"betMatchWinner\", \"name\" : \""
+		+ player + "\", \"idMatch\" : \""
+		+ idMatch + "\"}";
 	console.log(msg);
 	document.getElementById("m1-betmatchwinner").innerHTML = player;
 	document.getElementById("m1-betmatchwinner-result").innerHTML = "";
 	socket.send(msg);
 }
 
-function betGamesInMatch(nbGames) {
-	var msg = "{ \"type\" : \"betGamesInMatch\", \"nbGames\" : \"" + nbGames + "\" }";
-	console.log(msg);
-	socket.send(msg);
-}
 
 window.addEventListener("load", connect, false);
