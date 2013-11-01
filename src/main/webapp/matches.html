@@ -16,66 +16,88 @@
 }
 
 .serve {
-	color: yellow;
-	background-color: #ccc
+	color: black;
+	background-color: yellow;
 }
 </style>
 
 </head>
 <body>
-	<div class="container" ng-controller="AppCtrl">
+	<div class="container" >
 		<h2>Tennis Game Tournament - Java API for Websocket</h2>
 		<p class="lead">Basic HTML5 sample to illustrate the new Java API
 			for WebSocket (JSR 356).</p>
 
-		<div class="row">
-			<div class="col-xs-6 col-md-4" ng-repeat="match in matches">
+		<div class="row" ng-controller="AppCtrl">
+			<div class="col-xs-6 col-md-6" ng-repeat="match in matches">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<span id="m1-title">{{match.title}}</span> - <span id="m1-status"
-							class="label label-success"></span>
-	
+						<span id="m1-title">{{match.title}}</span>
+						<button class="btn btn-default active btn-xs" ng-show="isClosed(match.key)" ng-click="connect(match.key)" >CONNECT TO LIVEMODE ?</button> 
+						<button class="btn btn-default active btn-xs" ng-show="isOpen(match.key)" ng-click="disconnect(match.key)" >DISCONNECT</button>
 					</div>
-					<div class="panel-body" ng-controller="MatchCtrl">
-					<table class="table">
-						<thead>
-							<tr>
-								<th><button class="btn btn-primary btn-xs" ng-click="connect(match.key)" value="{{match.key}}">CONNECT TO LIVE ?</button> 
-								<button ng-click="disconnect(match.key)" class="btn">Close</button>
-								<button ng-click="betOnWinner()" class="btn">Max</button>
-								</th>
-								<th></th>
-								<th></th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-							<td><img  alt=" {{match.playerOneName}}" src="img/{{splitForImage(match.playerOneName,0)}}.jpg">
-		 						 {{match.playerOneName}}</td>
-								<td class="sets"><h4><span id="m1-p1-set1"
-									class="label label-default">{{match.p1Set1}}</span></h4></td>
-								<td class="sets"><h4><span id="m1-p1-set2"
-									class="label label-default">{{match.p1Set2}}</span></h4></td>
-								<td class="sets"><h4><span id="m1-p1-set3"
-									class="label label-default">{{match.p1Set3}}</span></h4></td>
-							</tr>
-							<tr>
-								<td>
-									<img  alt=" {{match.playerTwoName}}" src="img/{{splitForImage(match.playerTwoName,0)}}.jpg">
-		 						 	{{match.playerTwoName}}</td>
-								<td class="sets"><span id="m1-p1-set1"
-									class="label label-warning">{{match.p2Set1}}</span></td>
-								<td class="sets"><span id="m1-p1-set2"
-									class="label label-warning">{{match.p2Set2}}</span></td>
-								<td class="sets"><span id="m1-p1-set3"
-									class="label label-warning">{{match.p2Set3}}</span></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="panel-body" >
+						<!-- DISCONNECT TABLE -->
+						<table class="table" ng-show="noMessage(match.key)">
+							<thead>
+								<tr>
+									<th colspan="4">
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><img  alt=" {{match.playerOneName}}" src="img/{{splitForImage(match.playerOneName,0)}}.jpg"></td>
+			 						 <td>{{match.playerOneName}} 
+			 						 	<img src="img/blank.gif" class="flag flag-es" />
+			 						 </td>
+			 						 <td><img  alt=" {{match.playerTwoName}}" src="img/{{splitForImage(match.playerTwoName,0)}}.jpg"></td>
+			 						 <td>{{match.playerTwoName}} <img src="img/blank.gif" class="flag flag-fr" /></td>
+								</tr>
+							</tbody>
+						</table>
+					
+						<!-- LIVE MODE TABLE -->
+						<table class="table" ng-show="noMessage(match.key) == false">
+							<thead>
+								<tr>
+									<th colspan="2">
+									</th>
+									<th><small>PTS</small></th>
+									<th><small>G.</small></th>
+									<th colspan="3" align="center"><small><em>Finished Sets</em></small></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="player in lives[match.key].players">
+									<td><img  alt=" {{player.name}}" src="img/{{splitForImage(player.name,0)}}.jpg"></td>
+									<td> {{player.name}} <br/><img src="img/blank.gif" class="flag flag-es" /></td>
+			 						 <td class="active"><h5><span 
+										class="label label-danger">{{player.points}}</span></h5>
+										<span class="badge serve" ng-show="player.name == lives[match.key].serve">S</span>
+										</td>
+									<td><h4><span
+										class="label label-warning">{{player.games}}</span></h4></td>
+									<td class="sets"><span
+										class="label label-default">{{player.set1}}</span></td>
+									<td class="sets"><span 
+										class="label label-default">{{player.set2}}</span></td>
+									<td class="sets"><span 
+										class="label label-default">{{player.set3}}</span></td>
+								</tr>
+							</tbody>
+						</table>
 					</div> 
-					<div class="panel-footer">
-						
+					<div class="panel-footer" >
+						<!-- LIVE MODE COMMENTS -->
+						<div class="thumbnail" ng-show="isOpen(match.key)">
+							<div class="media">
+								<textarea style="font-size: 11px; background-color: #e5e5e5;"
+								 cols="45" rows="4">{{lives[match.key].comments}}</textarea>
+							</div>
+						</div>
+						<!-- WS CONNECTION STATUS -->
+						<div><em>Connection status : </em><span class="label label-success">{{getStatus(match.key)}}</span></div>
 					</div>
 				</div>
 			</div>

@@ -31,7 +31,7 @@ public class TennisMatch {
 	private boolean isSet2Finished = false;
 	private boolean isSet3Finished = false;
 	
-	private String serve = "player1";
+	private String serve;
 	
 	private StringBuffer liveComments = new StringBuffer() ;
 
@@ -48,6 +48,7 @@ public class TennisMatch {
 		this.title = title;
 		this.p1Name = playerOneName;
 		this.p2Name = playerTwoName;
+		this.serve = p1Name;
 		liveComments.append("Welcome to this match between " + p1Name + " and " + p2Name + ".");
 		LOG.info("Match started : " + title + " (" + p1Name + "-" + p2Name + ")");
 	}
@@ -140,10 +141,10 @@ public class TennisMatch {
 		if (hasGameWinner){
 			addLiveComments("Game " + playerWithHighestScore());
 			p2Points = p1Points = 0;
-			if ("player1".equals(serve)){
-				serve="player2";
+			if (p1Name.equals(serve)){
+				serve=p2Name;
 			} else {
-				serve="player1";
+				serve=p1Name;
 			}
 		}
 		return hasGameWinner;

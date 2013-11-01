@@ -71,7 +71,7 @@ function createWebSocket(host) {
 					m1comments.value = obj.match.comments;
 					m1comments.scrollTop = 999999;
 					// serve
-					if (obj.match.serve === "player1") {
+					if (obj.match.serve === obj.match.players[0].name) {
 						m1p1serve.innerHTML = "S";
 						m1p2serve.innerHTML = "";
 					} else {
