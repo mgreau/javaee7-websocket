@@ -12,6 +12,8 @@ import com.mgreau.wildfly.websocket.TennisMatch;
 public class MatchMessage extends Message {
 
 	private TennisMatch match;
+	
+	private String betOn;
 
 	public MatchMessage(TennisMatch match) {
 		this.match = match;
@@ -19,6 +21,15 @@ public class MatchMessage extends Message {
 
 	public TennisMatch getMatch() {
 		return match;
+	}
+	
+
+	public String getBetOn() {
+		return betOn;
+	}
+
+	public void setBetOn(String betOn) {
+		this.betOn = betOn;
 	}
 
 	/* For logging purposes */

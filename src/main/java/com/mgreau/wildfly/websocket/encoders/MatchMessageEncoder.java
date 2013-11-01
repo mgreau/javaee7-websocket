@@ -90,7 +90,8 @@ public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 													.add("set3",
 															m.getMatch()
 																	.getP2Set3())))
-							.add("comments", m.getMatch().getLiveComments()));
+							.add("comments", m.getMatch().getLiveComments())
+							.add("betOn", m.getBetOn()==null?"":m.getBetOn()));
 
 			jsonWrite.writeObject(builder.build());
 		}

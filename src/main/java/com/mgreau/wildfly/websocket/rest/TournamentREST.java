@@ -1,6 +1,6 @@
 package com.mgreau.wildfly.websocket.rest;
 
-import java.util.Set;
+import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -19,8 +19,8 @@ public class TournamentREST {
 	@GET
     @Path("lives")
     @Produces(MediaType.APPLICATION_JSON)
-    public Set<TennisMatch> getMatchesOnLive() {
-		return ejb.getMatches();
+    public Collection<TennisMatch> getMatchesOnLive() {
+		return ejb.getMatches().values();
 	}
 
 }

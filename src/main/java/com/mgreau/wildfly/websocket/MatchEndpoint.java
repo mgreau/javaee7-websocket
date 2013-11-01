@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -30,6 +31,9 @@ public class MatchEndpoint {
 	
 	private static final Logger logger = Logger.getLogger("MatchEndpoint");
 	
+	@Inject
+	StarterService ejbStart;
+	
     /* Queue for all open WebSocket sessions */
     static Queue<Session> queue = new ConcurrentLinkedQueue<>();
     
@@ -39,6 +43,9 @@ public class MatchEndpoint {
             for (Session session : queue) {
             	if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
             		if (session.isOpen()){
+            			BetMessage bet =  (BetMessage)session.getUserProperties().get("betMatchWinner"+matchId);
+            			if (bet != null)
+            				msg.setBetOn(bet.getWinner());
 	            		session.getBasicRemote().sendObject(msg);
 	                    logger.log(Level.INFO, "Score Sent: {0}", msg);
             		}
@@ -55,11 +62,11 @@ public class MatchEndpoint {
             for (Session session : queue) {
             	if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
             		if (session.isOpen()){
-            			BetMessage msg =  (BetMessage)session.getUserProperties().get("betMatchWinner");
+            			BetMessage msg =  (BetMessage)session.getUserProperties().get("betMatchWinner"+matchId);
             			if (winner != null && winner.equals(msg.getWinner())){
-            				msg.setResult("You WIN !!");
+            				msg.setResult("OK");
             			} else {
-            				msg.setResult("You LOOSE !!");
+            				msg.setResult("KO");
             			}
 	            		session.getBasicRemote().sendObject(msg);
 	                    logger.log(Level.INFO, "Result Sent: {0}", msg.getResult());
@@ -75,15 +82,21 @@ public class MatchEndpoint {
     @OnMessage
     public void message(final Session session, BetMessage msg) {
         logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
-        session.getUserProperties().put("betMatchWinner", msg);
+        //save this bet
+        session.getUserProperties().put("betMatchWinner"+msg.getMatchKey(), msg);
+        
+        //Send live result for this match
+        send(new MatchMessage(ejbStart.getMatches().get(msg.getMatchKey())), msg.getMatchKey());
     }
 
     @OnOpen
     public void openConnection(Session session, @PathParam("match-id") String gameId) {
-        /* Register this connection in the queue */
         queue.add(session);
         session.getUserProperties().put(gameId, true);
         logger.log(Level.INFO, "Connection opened for game : " + gameId);
+        
+        //Send live result for this match
+        send(new MatchMessage(ejbStart.getMatches().get(gameId)), gameId);
     }
     
     @OnClose
@@ -95,7 +108,6 @@ public class MatchEndpoint {
     
     @OnError
     public void error(Session session, Throwable t) {
-        /* Remove this connection from the queue */
         queue.remove(session);
         logger.log(Level.INFO, t.toString());
         logger.log(Level.INFO, "Connection error.");

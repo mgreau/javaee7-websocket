@@ -21,10 +21,7 @@ import javax.websocket.EndpointConfig;
 
 import com.mgreau.wildfly.websocket.messages.BetMessage;
 
-/* Decode a JSON message into a JoinMessage or a ChatMessage.
- * For example, the incoming message:
- * {"type":"chat","name":"Peter","target":"Duke","message":"How are you?"}
- * is decoded as (new ChatMessage("Peter", "Duke", "How are you?"))
+/* Decode a JSON message into a BetMessage.
  */
 public class MessageDecoder implements Decoder.Text<BetMessage> {
     /* Stores the name-value pairs from a JSON message as a Map */
@@ -43,7 +40,7 @@ public class MessageDecoder implements Decoder.Text<BetMessage> {
         if (willDecode(string)) {
             switch (messageMap.get("type")) {
                 case "betMatchWinner":
-                    msg = new BetMessage(messageMap.get("name"));
+                    msg = new BetMessage(messageMap.get("name"), messageMap.get("idMatch"));
                     break;
             }
         } else {

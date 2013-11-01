@@ -13,8 +13,11 @@ public class BetMessage extends Message {
 	
 	private String result;
 	
-	public BetMessage(String winner){
+	private String matchKey;
+	
+	public BetMessage(String winner, String matchKey){
 		this.winner = winner;
+		this.matchKey = matchKey;
 	}
 	
 	
@@ -23,7 +26,7 @@ public class BetMessage extends Message {
 	}
     
 	public String toString(){
-		return "[BetMessage] ...";
+		return "[BetMessage]["+ matchKey + "] ..." + winner;
 	}
 
 
@@ -35,4 +38,15 @@ public class BetMessage extends Message {
 	public void setResult(String result) {
 		this.result = result;
 	}
+
+
+	public String getMatchKey() {
+		return matchKey;
+	}
+
+
+	public void setMatchKey(String matchKey) {
+		this.matchKey = matchKey;
+	}
+	
 }

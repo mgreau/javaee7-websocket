@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html ng-app="tennisApp">
 <head>
 <title>Java EE 7 - Websocket - Wildfly 8 - OpenShit</title>
 <meta charset="UTF-8">
@@ -19,29 +19,36 @@
 	color: black;
 	background-color: yellow;
 }
+.th {
+ text-align: center;
+ 
+}
 </style>
 
 </head>
 <body>
-	<div class="container" >
+	<div class="container" ng-controller="TournamentCtrl">
 		<h2>Tennis Game Tournament - Java API for Websocket</h2>
 		<p class="lead">Basic HTML5 sample to illustrate the new Java API
 			for WebSocket (JSR 356).</p>
 
-		<div class="row" ng-controller="AppCtrl">
+		<div class="row">
 			<div class="col-xs-6 col-md-6" ng-repeat="match in matches">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<span id="m1-title">{{match.title}}</span>
-						<button class="btn btn-default active btn-xs" ng-show="isClosed(match.key)" ng-click="connect(match.key)" >CONNECT TO LIVEMODE ?</button> 
-						<button class="btn btn-default active btn-xs" ng-show="isOpen(match.key)" ng-click="disconnect(match.key)" >DISCONNECT</button>
+						<span id="m1-title">{{match.title}}</span>&nbsp;&nbsp;<button class="btn btn-default active btn-xs" ng-show="isOpen(match.key)" ng-click="disconnect(match.key)" >
+						<span class="glyphicon glyphicon-off"></span> Exit.</button>
 					</div>
 					<div class="panel-body" >
+						
 						<!-- DISCONNECT TABLE -->
 						<table class="table" ng-show="noMessage(match.key)">
 							<thead>
 								<tr>
 									<th colspan="4">
+									Game in progress... 
+									<button class="btn btn-warning active btn-xs" ng-show="isClosed(match.key)" ng-click="connect(match.key)" >
+									<span class="glyphicon glyphicon-power"></span>click to access live scores</button>
 									</th>
 								</tr>
 							</thead>
@@ -61,7 +68,9 @@
 						<table class="table" ng-show="noMessage(match.key) == false">
 							<thead>
 								<tr>
-									<th colspan="2">
+									<th colspan="3" align="center">
+										<span ng-show="isBet(match.key) == false">Bet on the Winner !</span>
+										<span ng-show="isBet(match.key)">You bet on <span class="label label-info">{{lives[match.key].betOn}}</span> as the Winner !</span>
 									</th>
 									<th><small>PTS</small></th>
 									<th><small>G.</small></th>
@@ -70,8 +79,13 @@
 							</thead>
 							<tbody>
 								<tr ng-repeat="player in lives[match.key].players">
-									<td><img  alt=" {{player.name}}" src="img/{{splitForImage(player.name,0)}}.jpg"></td>
+									<td>
+									<img  alt=" {{player.name}}" src="img/{{splitForImage(player.name,0)}}.jpg"></td>
 									<td> {{player.name}} <br/><img src="img/blank.gif" class="flag flag-es" /></td>
+									<td> 
+										<input name="bet" type="radio" ng-show="isBet(match.key) == false" ng-click="betOnWinner(match.key, player.name)" >
+										<span ng-show="isBetOnHim(match.key, player.name)" class="glyphicon glyphicon-star"></span>
+									</td>
 			 						 <td class="active"><h5><span 
 										class="label label-danger">{{player.points}}</span></h5>
 										<span class="badge serve" ng-show="player.name == lives[match.key].serve">S</span>
@@ -97,7 +111,7 @@
 							</div>
 						</div>
 						<!-- WS CONNECTION STATUS -->
-						<div><em>Connection status : </em><span class="label label-success">{{getStatus(match.key)}}</span></div>
+						<div><em>Connection status : </em><span class="label label-info">{{getStatus(match.key)}}</span></div>
 					</div>
 				</div>
 			</div>
@@ -105,7 +119,9 @@
 	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular-resource.min.js"></script>
-	<script src="js/matches.js"></script>
+	<script src="js/matches/app.js"></script>
+	<script src="js/matches/services.js"></script>
+	<script src="js/matches/controllers.js"></script>
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
