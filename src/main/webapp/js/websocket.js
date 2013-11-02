@@ -1,9 +1,19 @@
 var wsUrl;
 var idMatch = '1234';
+
+var appPath = window.location.pathname.split('/')[1];
+var host = window.location.hostname;
+var port = "8000";
+
+if (host == 'localhost') {
+	port = '8080';
+}
+
 if (window.location.protocol == 'https:') {
-	wsUrl = 'wss://' + window.location.host + ':8443/' + window.location.pathname +'matches/'+idMatch;
+	port = '8443';
+	wsUrl = 'wss://' + host + ':'+ port +'/' + appPath +'/matches/'+idMatch;
 } else {
-	wsUrl = 'ws://' + window.location.host + ':8000/' + window.location.pathname +'matches/'+idMatch;
+	wsUrl = 'ws://' + host + ':'+ port +'/' + appPath +'/matches/'+idMatch;
 }
 //wsUrl = 'ws://localhost:8080/usopen/matches/1234';
 

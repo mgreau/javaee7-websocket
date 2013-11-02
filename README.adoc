@@ -6,7 +6,9 @@ This project demonstrates how to use the WebSocket Protocol with Java API for We
 
 == Details == 
 There are 2 differents samples :
+
 * the first (/index.html) which handle 1 match and used only native Javascript on view side
+
 * the second (/matches.html) which is more complicated as it handles multiples matches and it used AngularJS on view side
 
 == Install
