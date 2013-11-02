@@ -1,7 +1,10 @@
 package com.mgreau.wildfly.websocket;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,10 +35,12 @@ public class MatchEndpoint {
 	private static final Logger logger = Logger.getLogger("MatchEndpoint");
 	
 	@Inject
-	StarterService ejbStart;
+	StarterService ejbService;
 	
     /* Queue for all open WebSocket sessions */
     static Queue<Session> queue = new ConcurrentLinkedQueue<>();
+    
+    static Map<String, Integer> nbBetsByMatch = new ConcurrentHashMap<>();
     
     public static void send(MatchMessage msg, String matchId) {
         try {
@@ -44,8 +49,11 @@ public class MatchEndpoint {
             	if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
             		if (session.isOpen()){
             			BetMessage bet =  (BetMessage)session.getUserProperties().get("betMatchWinner"+matchId);
-            			if (bet != null)
+            			if (bet != null){
             				msg.setBetOn(bet.getWinner());
+            			}
+            			if (nbBetsByMatch.get(matchId) != null)
+            				msg.setNbBets(nbBetsByMatch.get(matchId));
 	            		session.getBasicRemote().sendObject(msg);
 	                    logger.log(Level.INFO, "Score Sent: {0}", msg);
             		}
@@ -84,9 +92,11 @@ public class MatchEndpoint {
         logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
         //save this bet
         session.getUserProperties().put("betMatchWinner"+msg.getMatchKey(), msg);
+        incrementBetOnMatch(msg.getMatchKey());
         
         //Send live result for this match
-        send(new MatchMessage(ejbStart.getMatches().get(msg.getMatchKey())), msg.getMatchKey());
+        MatchMessage matchMsg = new MatchMessage(ejbService.getMatches().get(msg.getMatchKey()));
+        send(matchMsg, msg.getMatchKey());
     }
 
     @OnOpen
@@ -94,9 +104,8 @@ public class MatchEndpoint {
         queue.add(session);
         session.getUserProperties().put(gameId, true);
         logger.log(Level.INFO, "Connection opened for game : " + gameId);
-        
         //Send live result for this match
-        send(new MatchMessage(ejbStart.getMatches().get(gameId)), gameId);
+        send(new MatchMessage(ejbService.getMatches().get(gameId)), gameId);
     }
     
     @OnClose
@@ -111,5 +120,11 @@ public class MatchEndpoint {
         queue.remove(session);
         logger.log(Level.INFO, t.toString());
         logger.log(Level.INFO, "Connection error.");
+    }
+    
+    private void incrementBetOnMatch(String matchKey){
+    	if (nbBetsByMatch.get(matchKey) == null)
+    		nbBetsByMatch.put(matchKey, 0);
+    	nbBetsByMatch.put(matchKey,1+nbBetsByMatch.get(matchKey));
     }
 }

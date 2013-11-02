@@ -39,12 +39,11 @@ public class StarterService {
     public void play() {
     	for (Map.Entry<String,TennisMatch> match : matches.entrySet()){
     		TennisMatch m = match.getValue();
-    		if (m.hasMatchWinner()){
+    		if (m.isFinished()){
+    			//add a timer to restart a match after 20 secondes
     			m.reset();
-    			logger.log(Level.INFO, "---- RESET MATCH ----" + m.getPlayerOneName() 
-    					+ " VS " + m.getPlayerTwoName() );
     		}
-        	
+        	//Handle point
     		if (random.nextInt(2) == 1){
         		m.playerOneScores();
         	} else {
@@ -52,11 +51,8 @@ public class StarterService {
         	}
         	MatchEndpoint.send(new MatchMessage(m), match.getKey());
         	//if there is a winner, send result and reset the game
-        	if (m.hasMatchWinner()){
+        	if (m.isFinished()){
         		MatchEndpoint.sendBetResult(m.playerWithHighestSets(), match.getKey());
-        		logger.log(Level.INFO, "---- MATCH FINISHED ("+ m.playerWithHighestSets() +" "
-        				+ "Wins) ----" + m.getPlayerOneName() + " VS " + m.getPlayerTwoName() );
-            	
         	}
     	}
     }
@@ -64,5 +60,4 @@ public class StarterService {
     public Map<String, TennisMatch> getMatches(){
     	return matches;
     }
-   
 }

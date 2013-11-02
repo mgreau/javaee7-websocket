@@ -1,10 +1,3 @@
-/**
- * Copyright (c) 2013 Oracle and/or its affiliates. All rights reserved.
- *
- * You may not modify, use, reproduce, or distribute this software except in
- * compliance with  the terms of the License at:
- * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
- */
 package com.mgreau.wildfly.websocket.encoders;
 
 import java.io.StringWriter;
@@ -17,7 +10,6 @@ import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
 import com.mgreau.wildfly.websocket.messages.BetMessage;
-import com.mgreau.wildfly.websocket.messages.MatchMessage;
 
 /* Encode an MatchMessage as JSON.
  * For example, (new MatchMessage(tennisMatch))
@@ -39,7 +31,7 @@ public class BetMessageEncoder implements Encoder.Text<BetMessage> {
 		try (JsonWriter jsonWrite = Json.createWriter(swriter)) {
 			JsonObjectBuilder builder = Json.createObjectBuilder();
 			builder.add("winner",
-					m.getWinner())
+					m.getWinner()).add("matchKey", m.getMatchKey())
 			.add("result", m.getResult());
 			jsonWrite.writeObject(builder.build());
 		}

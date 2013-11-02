@@ -36,6 +36,8 @@ public class TennisMatch {
 	
 	private String serve;
 	
+	private boolean isFinished = false;
+	
 	private StringBuffer liveComments = new StringBuffer() ;
 
 	public String getPlayerOneName() {
@@ -72,9 +74,10 @@ public class TennisMatch {
 		p1Set1 = p1Set2 = p1Set3 =  0;
 		p2Set1 = p2Set2 = p2Set3 = 0;
 		p1GamesInCurrentSet = p2GamesInCurrentSet = 0;
-		isSet1Finished = isSet2Finished = isSet3Finished = false;
+		isSet1Finished = isSet2Finished = isSet3Finished = isFinished = false;
 		liveComments = new StringBuffer();
-		liveComments.append("Welcome to this match between " + p1Name + " and " + p2Name + ".");
+		liveComments.append("WELCOME to this match between " + p1Name + " and " + p2Name + ".");
+		
 	}
 
 	public String getPlayer1Score() {
@@ -183,6 +186,13 @@ public class TennisMatch {
 			else
 				p2Sets++;
 			p1GamesInCurrentSet = p2GamesInCurrentSet = 0;
+			
+			//check if match is finished
+			if (hasMatchWinner()){
+				isFinished = true;
+				addLiveComments(playerWithHighestGames() + " WINS the match !!");
+			}
+			
 			return true;
 		}
 		return false;
@@ -342,5 +352,13 @@ public class TennisMatch {
 
 	public void setP1Country(String p1Country) {
 		this.p1Country = p1Country;
+	}
+
+	public boolean isFinished() {
+		return isFinished;
+	}
+
+	public void setFinished(boolean isFinished) {
+		this.isFinished = isFinished;
 	}
 }

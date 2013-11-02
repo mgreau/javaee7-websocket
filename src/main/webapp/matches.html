@@ -39,10 +39,11 @@
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" ng-repeat="match in matches">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<span id="m1-title">{{match.title}}</span>&nbsp;&nbsp;<button class="btn btn-default active btn-xs" ng-show="isOpen(match.key)" ng-click="disconnect(match.key)" >
+						<span>{{match.title}}</span>&nbsp;&nbsp;<button class="btn btn-default active btn-xs" ng-show="isOpen(match.key)" ng-click="disconnect(match.key)" >
 						<span class="glyphicon glyphicon-off"></span> Exit.</button>
 					</div>
 					<div class="panel-body" >
+						<div class="alert alert-success" ng-show="isFinished(match.key)">{{betMessages[match.key].result}}</div>
 						
 						<!-- DISCONNECT TABLE -->
 						<table class="table" ng-show="noMessage(match.key)">
@@ -71,6 +72,7 @@
 							<thead>
 								<tr>
 									<th colspan="5" align="center">
+									 	<span class="glyphicon glyphicon-user"></span> <span class="badge">{{lives[match.key].nbBets}}</span> |
 										<span ng-show="isBet(match.key) == false">Bet on the Winner !</span>
 										<span ng-show="isBet(match.key)">You bet on <span class="label label-info">{{lives[match.key].betOn}}</span> as the Winner !</span>
 									</th>
@@ -85,7 +87,7 @@
 									<td> {{player.name}} <br/><img src="img/blank.gif" class="flag flag-{{player.country}}" /></td>
 									<td> 
 										<input name="bet" type="radio" ng-show="isBet(match.key) == false" ng-click="betOnWinner(match.key, player.name)" >
-										<span ng-show="isBetOnHim(match.key, player.name)" class="glyphicon glyphicon-star"></span>
+										<span ng-show="isBetOnPlayer(match.key, player.name)" class="glyphicon glyphicon-star"></span>
 									</td>
 			 						<td class="active"><h5><span 
 										class="label label-danger">{{player.points}}</span></h5>
@@ -94,13 +96,12 @@
 									<td><h4><span
 										class="label label-warning">{{player.games}}</span></h4>
 									</td>
-									<td class="sets"><span
-										class="label label-default">{{player.set1}}</span>
+									<td class="sets"><span ng-class="getSetColor(match.key,player,1)">{{player.set1}}</span>
 									</td>
 									<td class="sets"><span 
-										class="label label-default">{{player.set2}}</span></td>
+										ng-class="getSetColor(match.key,player,2)">{{player.set2}}</span></td>
 									<td class="sets"><span 
-										class="label label-default">{{player.set3}}</span></td>
+										ng-class="getSetColor(match.key,player,3)">{{player.set3}}</span></td>
 								</tr>
 							</tbody>
 						</table>

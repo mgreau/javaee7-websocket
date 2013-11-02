@@ -11,12 +11,16 @@ app.factory('MatchWebSocketService', function($window) {
 		var appPath = $window.location.pathname.split('/')[1];
 		var host = $window.location.hostname;
 		var port = "8000";
-		
+		var protocol = "ws";
 		if (angular.equals(host, 'localhost') ){
 			port = '8080';
 		}
+		if (angular.equals($window.location.protocol,'https:')){
+			port = '8443';
+			protocol = "wss";
+		}
 			
-		var wsUrl = 'ws://'+ host + ':'+ port + '/' + appPath + '/matches/' + idMatch;
+		var wsUrl = protocol + '://'+ host + ':'+ port + '/' + appPath + '/matches/' + idMatch;
 		var websocket = new WebSocket(wsUrl);
 
 		websocket.onopen = function() {
@@ -38,6 +42,7 @@ app.factory('MatchWebSocketService', function($window) {
 		service.ws[idMatch] = websocket;
 	};
 
+	// Bet on the winner of the match
 	service.sendBetMatchWinner = function(idMatch, player) {
 		var msg = "{ \"type\" : \"betMatchWinner\", \"name\" : \""
 			+ player + "\", \"idMatch\" : \""
@@ -50,6 +55,7 @@ app.factory('MatchWebSocketService', function($window) {
 		service.ws[idMatch].close();
 	};
 	
+	// WebSocket connection status
 	service.status = function(idMatch) {
 		if (service.ws == null || angular.isUndefined(service.ws[idMatch])){
 			return WebSocket.CLOSED;

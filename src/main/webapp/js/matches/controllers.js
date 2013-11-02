@@ -3,6 +3,7 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 	$scope.matches = [];
 	$scope.lives = new Object();
 	$scope.msg = new Object();
+	$scope.betMessages = new Object();
 	
 	MatchRESTService.async().then(function(d) {
 	    $scope.matches = d;
@@ -12,12 +13,16 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 		console.log(idMatch + " : callback");
 		try {
 			var obj = JSON.parse(message);
+			//Match Live message from server
 			if (obj.hasOwnProperty("match")){
 				$scope.lives[idMatch] = obj.match;
-			}else if (obj.hasOwnProperty("betMatchWinner")){
-				//todo handle betmessages;
+			}
+			//Bet message from server
+			else if (obj.hasOwnProperty("winner")){
+				$scope.betMessages[idMatch] = obj;
 			}
 		} catch (exception) {
+			//Status message
 			$scope.msg[idMatch] = message;
 		}
 		$scope.$apply();
@@ -62,8 +67,29 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 				&& angular.equals($scope.lives[idMatch].betOn,"") == false);
 	};
 	
-	$scope.isBetOnHim = function(idMatch, player) {
+	$scope.isBetOnPlayer = function(idMatch, player) {
 		return $scope.isBet(idMatch) && angular.equals($scope.lives[idMatch].betOn, player); 
+	};
+	
+	$scope.isFinished = function(idMatch) {
+		return (angular.isUndefined($scope.lives[idMatch]) == false  
+				&& $scope.lives[idMatch].finished);
+	};
+	
+	//win set have green background, grey for others
+	$scope.getSetColor = function(idMatch, player, idSet) {
+		var cssClass = "label label-default";
+			angular.forEach($scope.lives[idMatch].players, function(p, key){
+				  if (angular.equals(p.name, player.name) == false)
+					  if(idSet == 1 && player.set1 > p.set1){
+						  cssClass = 'label label-success';
+					  } else if(idSet == 2 && player.set2 > p.set2){
+						  cssClass = 'label label-success';
+					  } else if(idSet == 3 && player.set3 > p.set3){
+						  cssClass = 'label label-success';
+					  }
+				}, cssClass);
+		return cssClass;
 	};
 	
 	//Utils for img source
