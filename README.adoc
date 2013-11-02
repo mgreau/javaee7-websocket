@@ -12,13 +12,13 @@ This project shows how to use the WebSocket Protocol with :
 == Overview == 
 There are 2 samples :
 
-* the first one (/index.html) which handle a single match and uses only native Javascript on view side
+* the first one (/index.html) which handle *just one* match and uses *only native Javascript (client-side)*
 ** online demo : http://wildfly-mgreau.rhcloud.com/usopen/
 ** local access : http://localhost:8080/usopen/
 
 image::html5_websocket_simple.png[Screenshot of the WebSocket Java EE 7 demo with a single match and native JS]
 
-* the second (/matches.html) which is more complicated as it handles multiples matches and it uses AngularJS on view side
+* the second (/matches.html) which is more complicated as it handles several matches and it uses AngularJS client-side solution
 ** online demo : http://wildfly-mgreau.rhcloud.com/usopen/matches.html
 ** local access : http://localhost:8080/usopen/matches.html
 
