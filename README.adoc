@@ -18,7 +18,7 @@ There are 2 samples :
 
 image::html5_websocket_simple.png[Screenshot of the WebSocket Java EE 7 demo with a single match and native JS]
 
-* the second (/matches.html) which is more complicated as it handles several matches and it uses AngularJS client-side solution
+* the second (/matches.html) which is more complicated as it handles *several matches* and it uses *AngularJS client-side solution*
 ** online demo : http://wildfly-mgreau.rhcloud.com/usopen/matches.html
 ** local access : http://localhost:8080/usopen/matches.html
 

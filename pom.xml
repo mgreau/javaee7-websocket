@@ -3,18 +3,18 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.mgreau.wildfly</groupId>
-	<artifactId>wildfly-websocket</artifactId>
+	<artifactId>javaee7-websocket</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>wildfly-websocket</name>
+	<name>javaee7-websocket</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Java EE 7 -->
 		<javaee.api.version>7.0</javaee.api.version>
 		<!-- Wildfly -->
-		<version.jboss.spec.javaee.7.0>8.0.0.Alpha3</version.jboss.spec.javaee.7.0>
+		<version.jboss.spec.javaee.7.0>8.0.0.Beta1</version.jboss.spec.javaee.7.0>
 		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
 
 		<!-- Maven -->
