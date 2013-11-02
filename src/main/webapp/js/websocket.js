@@ -1,9 +1,9 @@
 var wsUrl;
 var idMatch = '1234';
 if (window.location.protocol == 'https:') {
-	wsUrl = 'wss://' + window.location.host + window.location.pathname +'matches/'+idMatch;
+	wsUrl = 'wss://' + window.location.host + ':8443/' + window.location.pathname +'matches/'+idMatch;
 } else {
-	wsUrl = 'ws://' + window.location.host + window.location.pathname +'matches/'+idMatch;
+	wsUrl = 'ws://' + window.location.host + ':8000/' + window.location.pathname +'matches/'+idMatch;
 }
 //wsUrl = 'ws://localhost:8080/usopen/matches/1234';
 

@@ -9,8 +9,14 @@ app.factory('MatchWebSocketService', function($window) {
 			return;
 		}
 		var appPath = $window.location.pathname.split('/')[1];
-		var wsUrl = 'ws://'+ $window.location.hostname + ':' 
-			+ $window.location.port + '/' + appPath + '/matches/' + idMatch;
+		var host = $window.location.hostname;
+		var port = "8000";
+		
+		if (angular.equals(host, 'localhost') ){
+			port = '8080';
+		}
+			
+		var wsUrl = 'ws://'+ host + ':'+ port + '/' + appPath + '/matches/' + idMatch;
 		var websocket = new WebSocket(wsUrl);
 
 		websocket.onopen = function() {
