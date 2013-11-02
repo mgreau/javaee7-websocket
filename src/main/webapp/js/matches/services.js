@@ -1,4 +1,5 @@
 app.factory('MatchWebSocketService', function($window) {
+	
 	var service = {};
 	service.ws = new Object();
 
@@ -8,24 +9,24 @@ app.factory('MatchWebSocketService', function($window) {
 			return;
 		}
 		var appPath = $window.location.pathname.split('/')[1];
-		var wsUrl = 'ws://'+ $window.location.hostname + ':' + $window.location.port + '/' + appPath + '/matches/' + idMatch;
+		var wsUrl = 'ws://'+ $window.location.hostname + ':' 
+			+ $window.location.port + '/' + appPath + '/matches/' + idMatch;
 		var websocket = new WebSocket(wsUrl);
-		var key = idMatch;
 
 		websocket.onopen = function() {
-			service.callback(key,"CONNECTED");
+			service.callback(idMatch,"CONNECTED");
 		};
 
 		websocket.onerror = function() {
-			service.callback(key,"Failed to open a connection" );
+			service.callback(idMatch,"Failed to open a connection" );
 		};
 
 		websocket.onclose = function() {
-			service.callback(key,"DISCONNECTED");
+			service.callback(idMatch,"DISCONNECTED");
 		};
 
 		websocket.onmessage = function(message) {
-			service.callback(key, message.data);
+			service.callback(idMatch, message.data);
 		};
 
 		service.ws[idMatch] = websocket;

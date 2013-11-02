@@ -58,7 +58,8 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 	};
 	
 	$scope.isBet = function(idMatch) {
-		return (angular.equals($scope.lives[idMatch].betOn,"") == false);
+		return (angular.isUndefined($scope.lives[idMatch]) == false  
+				&& angular.equals($scope.lives[idMatch].betOn,"") == false);
 	};
 	
 	$scope.isBetOnHim = function(idMatch, player) {

@@ -49,6 +49,9 @@ public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 													.add("name",
 															m.getMatch()
 																	.getPlayerOneName())
+													.add("country",
+															m.getMatch()
+																	.getP1Country())
 													.add("games",
 															m.getMatch()
 																	.getP1CurrentGame())
@@ -75,6 +78,9 @@ public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 													.add("games",
 															m.getMatch()
 																	.getP2CurrentGame())
+													.add("country",
+															m.getMatch()
+																	.getP2Country())
 													.add("sets",
 															m.getMatch()
 																	.getP2Sets())

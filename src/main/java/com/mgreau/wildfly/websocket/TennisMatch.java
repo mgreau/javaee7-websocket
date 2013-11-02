@@ -12,6 +12,9 @@ public class TennisMatch {
 	
 	private String p2Name;
 	private String p1Name;
+	
+	private String p2Country;
+	private String p1Country;
 
 	private int p1Points = 0;
 	private int p2Points = 0;
@@ -43,11 +46,14 @@ public class TennisMatch {
 		return p2Name;
 	}
 
-	public TennisMatch(String key, String title, String playerOneName, String playerTwoName) {
+	public TennisMatch(String key, String title, String playerOneName, String playerOneCountry, 
+			String playerTwoName, String playerTwoCountry) {
 		this.key = key;
 		this.title = title;
 		this.p1Name = playerOneName;
 		this.p2Name = playerTwoName;
+		this.p1Country = playerOneCountry;
+		this.p2Country = playerTwoCountry;
 		this.serve = p1Name;
 		liveComments.append("Welcome to this match between " + p1Name + " and " + p2Name + ".");
 		LOG.info("Match started : " + title + " (" + p1Name + "-" + p2Name + ")");
@@ -320,5 +326,21 @@ public class TennisMatch {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getP2Country() {
+		return p2Country;
+	}
+
+	public void setP2Country(String p2Country) {
+		this.p2Country = p2Country;
+	}
+
+	public String getP1Country() {
+		return p1Country;
+	}
+
+	public void setP1Country(String p1Country) {
+		this.p1Country = p1Country;
 	}
 }

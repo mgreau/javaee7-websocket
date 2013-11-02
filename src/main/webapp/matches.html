@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html ng-app="tennisApp">
 <head>
-<title>Java EE 7 - Websocket - Wildfly 8 - OpenShit</title>
+<title>Java EE 7 - Websocket - AngularJS - Wildfly 8 - OpenShit</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="" />
-<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/flags.css">
@@ -53,12 +52,11 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td><img  alt=" {{match.playerOneName}}" src="img/{{splitForImage(match.playerOneName,0)}}.jpg"></td>
-			 						 <td>{{match.playerOneName}} 
-			 						 	<img src="img/blank.gif" class="flag flag-es" />
+									<td><img  alt="{{match.playerOneName}}" src="img/{{splitForImage(match.playerOneName,0)}}.jpg"></td>
+			 						 <td>{{match.playerOneName}} <img src="img/blank.gif" class="flag flag-{{match.p1Country}}" />
 			 						 </td>
 			 						 <td><img  alt=" {{match.playerTwoName}}" src="img/{{splitForImage(match.playerTwoName,0)}}.jpg"></td>
-			 						 <td>{{match.playerTwoName}} <img src="img/blank.gif" class="flag flag-fr" /></td>
+			 						 <td>{{match.playerTwoName}} <img src="img/blank.gif" class="flag flag-{{match.p2Country}}" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -67,32 +65,33 @@
 						<table class="table" ng-show="noMessage(match.key) == false">
 							<thead>
 								<tr>
-									<th colspan="3" align="center">
+									<th colspan="5" align="center">
 										<span ng-show="isBet(match.key) == false">Bet on the Winner !</span>
 										<span ng-show="isBet(match.key)">You bet on <span class="label label-info">{{lives[match.key].betOn}}</span> as the Winner !</span>
 									</th>
-									<th><small>PTS</small></th>
-									<th><small>G.</small></th>
 									<th colspan="3" align="center"><small><em>Finished Sets</em></small></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="player in lives[match.key].players">
 									<td>
-									<img  alt=" {{player.name}}" src="img/{{splitForImage(player.name,0)}}.jpg"></td>
-									<td> {{player.name}} <br/><img src="img/blank.gif" class="flag flag-es" /></td>
+										<img  alt=" {{player.name}}" src="img/{{splitForImage(player.name,0)}}.jpg">
+									</td>
+									<td> {{player.name}} <br/><img src="img/blank.gif" class="flag flag-{{player.country}}" /></td>
 									<td> 
 										<input name="bet" type="radio" ng-show="isBet(match.key) == false" ng-click="betOnWinner(match.key, player.name)" >
 										<span ng-show="isBetOnHim(match.key, player.name)" class="glyphicon glyphicon-star"></span>
 									</td>
-			 						 <td class="active"><h5><span 
+			 						<td class="active"><h5><span 
 										class="label label-danger">{{player.points}}</span></h5>
 										<span class="badge serve" ng-show="player.name == lives[match.key].serve">S</span>
-										</td>
+									</td>
 									<td><h4><span
-										class="label label-warning">{{player.games}}</span></h4></td>
+										class="label label-warning">{{player.games}}</span></h4>
+									</td>
 									<td class="sets"><span
-										class="label label-default">{{player.set1}}</span></td>
+										class="label label-default">{{player.set1}}</span>
+									</td>
 									<td class="sets"><span 
 										class="label label-default">{{player.set2}}</span></td>
 									<td class="sets"><span 
@@ -106,7 +105,7 @@
 						<div class="thumbnail" ng-show="isOpen(match.key)">
 							<div class="media">
 								<textarea style="font-size: 11px; background-color: #e5e5e5;"
-								 cols="45" rows="4">{{lives[match.key].comments}}</textarea>
+								 cols="55" rows="4">{{lives[match.key].comments}}</textarea>
 							</div>
 						</div>
 						<!-- WS CONNECTION STATUS -->
