@@ -1,17 +1,30 @@
-= WebSocket JavaEE 7 Demo
+= WebSocket Java EE 7 - AngularJS - WildFly 8
 Maxime Gréaun <@mgreau>
 :imagesdir: .
 
-This project demonstrates how to use the WebSocket Protocol with Java API for WebSocket (from Java EE 7 specifications) and The WebSocket Javascript API (from W3C)
+This project shows how to use the WebSocket Protocol with :
+* Java API for WebSocket (from Java EE 7 specifications)
+* WebSocket HTML 5 / Javascript API (from W3C)
+* AngularJS framework
+* deployed on WildFly 8.0.0-Beta1
 
-== Details == 
-There are 2 differents samples :
+== Overview == 
+There are 2 samples :
 
-* the first (/index.html) which handle 1 match and used only native Javascript on view side
+* the first one (/index.html) which handle a single match and used only native Javascript on view side
+** online demo : http://wildfly-mgreau.rhcloud.com/usopen/
+** local access : http://localhost:8080/usopen/
+
+image::doc/img/html5_websocket_simple.png[Screenshot of the WebSocket Java EE 7 demo with a single match and native JS]
 
 * the second (/matches.html) which is more complicated as it handles multiples matches and it used AngularJS on view side
+** online demo : http://wildfly-mgreau.rhcloud.com/usopen/matches.html
+** local access : http://localhost:8080/usopen/matches.html
 
-== Install
+image::doc/img/html5_websocket_angularjs.png[Screenshot of the WebSocket Java EE 7 demo with a severals matches and AngularJS]
+
+
+== Install on your WildFly 8 application server
   
 . Clone this project :  
 
@@ -30,9 +43,3 @@ There are 2 differents samples :
    ** 1 match : http://localhost:8080/usopen/index.html
    ** multiples matches : http://localhost:8080/usopen/matches.html
 
-== Demo / Screenshot
-* Online demo : http://wildfly-mgreau.rhcloud.com/usopen/
-
-image::html5_websocket.png[Screenshot of the WebSocket Java EE 7 demo]
-
-image::html5_websocket_android.png[Screenshot of the WebSocket Java EE 7 demo on mobile]
