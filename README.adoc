@@ -1,8 +1,9 @@
 = WebSocket Java EE 7 - AngularJS - WildFly 8
 Maxime Gréaun <@mgreau>
-:imagesdir: .
+:imagesdir: ./doc/img
 
 This project shows how to use the WebSocket Protocol with :
+
 * Java API for WebSocket (from Java EE 7 specifications)
 * WebSocket HTML 5 / Javascript API (from W3C)
 * AngularJS framework
@@ -11,20 +12,20 @@ This project shows how to use the WebSocket Protocol with :
 == Overview == 
 There are 2 samples :
 
-* the first one (/index.html) which handle a single match and used only native Javascript on view side
+* the first one (/index.html) which handle a single match and uses only native Javascript on view side
 ** online demo : http://wildfly-mgreau.rhcloud.com/usopen/
 ** local access : http://localhost:8080/usopen/
 
-image::doc/img/html5_websocket_simple.png[Screenshot of the WebSocket Java EE 7 demo with a single match and native JS]
+image::html5_websocket_simple.png[Screenshot of the WebSocket Java EE 7 demo with a single match and native JS]
 
-* the second (/matches.html) which is more complicated as it handles multiples matches and it used AngularJS on view side
+* the second (/matches.html) which is more complicated as it handles multiples matches and it uses AngularJS on view side
 ** online demo : http://wildfly-mgreau.rhcloud.com/usopen/matches.html
 ** local access : http://localhost:8080/usopen/matches.html
 
-image::doc/img/html5_websocket_angularjs.png[Screenshot of the WebSocket Java EE 7 demo with a severals matches and AngularJS]
+image::html5_websocket_angularjs.png[Screenshot of the WebSocket Java EE 7 demo with a severals matches and AngularJS]
 
 
-== Install on your WildFly 8 application server
+== Install on your WildFly 8 Application Server
   
 . Clone this project :  
 
@@ -38,7 +39,7 @@ image::doc/img/html5_websocket_angularjs.png[Screenshot of the WebSocket Java EE
 
    mvn clean package jboss-as:deploy
 
-. Launch the browser :
+. Launch your browser :
 
    ** 1 match : http://localhost:8080/usopen/index.html
    ** multiples matches : http://localhost:8080/usopen/matches.html
