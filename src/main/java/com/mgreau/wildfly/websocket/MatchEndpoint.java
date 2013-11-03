@@ -39,6 +39,7 @@ public class MatchEndpoint {
     /** All open WebSocket sessions */
     static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
     
+    /** Handle number of bets by match */
     static Map<String, AtomicInteger> nbBetsByMatch = new ConcurrentHashMap<>();
     
     @Inject StarterService ejbService;
@@ -93,6 +94,7 @@ public class MatchEndpoint {
             		if (isFinished){
 	        			//Match finished, need to clear properties
 	            		session.getUserProperties().clear();
+	            		nbBetsByMatch.get(matchId).set(0);
             		}
         		}
             }
