@@ -8,7 +8,6 @@
 package com.mgreau.wildfly.websocket.decoders;
 
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +19,7 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import com.mgreau.wildfly.websocket.messages.BetMessage;
+
 
 /* Decode a JSON message into a BetMessage.
  */
@@ -40,7 +40,7 @@ public class MessageDecoder implements Decoder.Text<BetMessage> {
         if (willDecode(string)) {
             switch (messageMap.get("type")) {
                 case "betMatchWinner":
-                    msg = new BetMessage(messageMap.get("name"), messageMap.get("idMatch"));
+                    msg = new BetMessage(messageMap.get("name"));
                     break;
             }
         } else {

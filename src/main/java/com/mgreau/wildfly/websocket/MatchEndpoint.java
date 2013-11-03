@@ -1,11 +1,12 @@
 package com.mgreau.wildfly.websocket;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,30 +33,29 @@ import com.mgreau.wildfly.websocket.messages.MatchMessage;
 		)
 public class MatchEndpoint {
 	
+	/** log */
 	private static final Logger logger = Logger.getLogger("MatchEndpoint");
 	
-	@Inject
-	StarterService ejbService;
-	
-    /* Queue for all open WebSocket sessions */
-    static Queue<Session> queue = new ConcurrentLinkedQueue<>();
+    /** All open WebSocket sessions */
+    static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
     
-    static Map<String, Integer> nbBetsByMatch = new ConcurrentHashMap<>();
+    static Map<String, AtomicInteger> nbBetsByMatch = new ConcurrentHashMap<>();
     
+    @Inject StarterService ejbService;
+    
+    /**
+     * Send Live Match message for all peers connected to this match
+     * @param msg
+     * @param matchId
+     */
     public static void send(MatchMessage msg, String matchId) {
         try {
             /* Send updates to all open WebSocket sessions for this match */
-            for (Session session : queue) {
+            for (Session session : peers) {
             	if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
             		if (session.isOpen()){
-            			BetMessage bet =  (BetMessage)session.getUserProperties().get("betMatchWinner"+matchId);
-            			if (bet != null){
-            				msg.setBetOn(bet.getWinner());
-            			}
-            			if (nbBetsByMatch.get(matchId) != null)
-            				msg.setNbBets(nbBetsByMatch.get(matchId));
 	            		session.getBasicRemote().sendObject(msg);
-	                    logger.log(Level.INFO, "Score Sent: {0}", msg);
+	                    logger.log(Level.INFO, " Score Sent: {0}", msg);
             		}
             	}
             }
@@ -64,67 +64,98 @@ public class MatchEndpoint {
         }   
     }
     
-    public static void sendBetResult(String winner, String matchId) {
+    /**
+     * When the match is finished, each peer which has bet on this match receive a message.
+     * @param winner
+     * @param matchId
+     */
+    public static void sendBetMessages(String winner, String matchId, boolean isFinished) {
         try {
             /* Send updates to all open WebSocket sessions for this match */
-            for (Session session : queue) {
+            for (Session session : peers) {
             	if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
             		if (session.isOpen()){
-            			BetMessage msg =  (BetMessage)session.getUserProperties().get("betMatchWinner"+matchId);
-            			if (winner != null && winner.equals(msg.getWinner())){
-            				msg.setResult("OK");
-            			} else {
-            				msg.setResult("KO");
+            			if (session.getUserProperties().containsKey("bet")){
+            				BetMessage betMsg = new BetMessage((String)session.getUserProperties().get("bet"));
+            				
+            				if (isFinished){
+	            				if (winner != null 
+		            					&& winner.equals(betMsg.getWinner())){
+		            				betMsg.setResult("OK");
+		            			} else {
+		            				betMsg.setResult("KO");
+		            			}
+            				}
+            				sendBetMessage(session, betMsg, matchId);
+		                    logger.log(Level.INFO, "Result Sent: {0}", betMsg.getResult());
             			}
-	            		session.getBasicRemote().sendObject(msg);
-	                    logger.log(Level.INFO, "Result Sent: {0}", msg.getResult());
+        			}
+            		if (isFinished){
+	        			//Match finished, need to clear properties
+	            		session.getUserProperties().clear();
             		}
-            	}
+        		}
             }
+            logger.log(Level.INFO, "Match FINISHED");
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, e.toString());
+        }   
+    }
+    
+    
+    public static void sendBetMessage(Session session, BetMessage betMsg, String matchId) {
+        try {
+        	betMsg.setNbBets(nbBetsByMatch.get(matchId).get());
+    		session.getBasicRemote().sendObject(betMsg);
+            logger.log(Level.INFO, "BetMsg Sent: {0}", betMsg.toString());
         } catch (IOException | EncodeException e) {
-            logger.log(Level.INFO, e.toString());
+            logger.log(Level.SEVERE, e.toString());
         }   
     }
     
     
     @OnMessage
-    public void message(final Session session, BetMessage msg) {
+    public void message(final Session session, BetMessage msg,  @PathParam("match-id") String matchId) {
         logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
         //save this bet
-        session.getUserProperties().put("betMatchWinner"+msg.getMatchKey(), msg);
-        incrementBetOnMatch(msg.getMatchKey());
+        session.getUserProperties().put("bet", msg.getWinner());
         
-        //Send live result for this match
-        MatchMessage matchMsg = new MatchMessage(ejbService.getMatches().get(msg.getMatchKey()));
-        send(matchMsg, msg.getMatchKey());
+        //Send betMsg with bet count
+        //TODO : +1 pour nbBet
+        if (!nbBetsByMatch.containsKey(matchId)){
+        	nbBetsByMatch.put(matchId, new AtomicInteger());
+        }
+        nbBetsByMatch.get(matchId).incrementAndGet();
+        sendBetMessages(null, matchId, false);
     }
 
     @OnOpen
-    public void openConnection(Session session, @PathParam("match-id") String gameId) {
-        queue.add(session);
-        session.getUserProperties().put(gameId, true);
-        logger.log(Level.INFO, "Connection opened for game : " + gameId);
+    public void openConnection(Session session, @PathParam("match-id") String matchId) {
+    	logger.log(Level.INFO, "Session ID : " + session.getId() +" - Connection opened for match : " + matchId);
+        session.getUserProperties().put(matchId, true);
+        peers.add(session);
+       
         //Send live result for this match
-        send(new MatchMessage(ejbService.getMatches().get(gameId)), gameId);
+        send(new MatchMessage(ejbService.getMatches().get(matchId)), matchId);
     }
     
     @OnClose
-    public void closedConnection(Session session) {
+    public void closedConnection(Session session, @PathParam("match-id") String matchId) {
+    	if (session.getUserProperties().containsKey("bet")){
+            /* Remove bet */
+    		 nbBetsByMatch.get(matchId).decrementAndGet();
+    		 sendBetMessages(null, matchId, false);
+    	}
         /* Remove this connection from the queue */
-        queue.remove(session);
+        peers.remove(session);
         logger.log(Level.INFO, "Connection closed.");
     }
     
     @OnError
     public void error(Session session, Throwable t) {
-        queue.remove(session);
+        peers.remove(session);
         logger.log(Level.INFO, t.toString());
         logger.log(Level.INFO, "Connection error.");
     }
-    
-    private void incrementBetOnMatch(String matchKey){
-    	if (nbBetsByMatch.get(matchKey) == null)
-    		nbBetsByMatch.put(matchKey, 0);
-    	nbBetsByMatch.put(matchKey,1+nbBetsByMatch.get(matchKey));
-    }
+   
 }

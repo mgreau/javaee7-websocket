@@ -14,7 +14,7 @@ import com.mgreau.wildfly.websocket.messages.MatchMessage;
 /* Encode an MatchMessage as JSON.
  * For example, (new MatchMessage(tennisMatch))
  * is encoded as follows:
- {"bet":"Player x wins!","match":{"comments":"Welcome to this match between N. DJOKOVIC and R. NADAL.\n10:6:27 - Deuce\n10:6:27 - Deuce\n10:6:30 - Advantage N. DJOKOVIC\n10:6:30 - Advantage N. DJOKOVIC\n10:6:33 - Game N. DJOKOVIC\n10:6:51 - Game R. NADAL","serve":"player1","title":"US OPEN - FINAL","players":[{"name":"N. DJOKOVIC","games":1,"sets":0,"points":"15","set1":0,"set2":0,"set3":0},{"name":"R. NADAL","games":1,"sets":0,"points":"0","set1":0,"set2":0,"set3":0}]}} 
+ {"match":{"comments":"Welcome to this match between N. DJOKOVIC and R. NADAL.\n10:6:27 - Deuce\n10:6:27 - Deuce\n10:6:30 - Advantage N. DJOKOVIC\n10:6:30 - Advantage N. DJOKOVIC\n10:6:33 - Game N. DJOKOVIC\n10:6:51 - Game R. NADAL","serve":"player1","title":"US OPEN - FINAL","players":[{"name":"N. DJOKOVIC","games":1,"sets":0,"points":"15","set1":0,"set2":0,"set3":0},{"name":"R. NADAL","games":1,"sets":0,"points":"0","set1":0,"set2":0,"set3":0}]}} 
  */
 public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 	@Override
@@ -90,9 +90,7 @@ public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 															m.getMatch()
 																	.getP2Set3())))
 							.add("comments", m.getMatch().getLiveComments())
-							.add("finished", m.getMatch().isFinished())
-							.add("nbBets", m.getNbBets())
-							.add("betOn", m.getBetOn()==null?"":m.getBetOn()));
+							.add("finished", m.getMatch().isFinished()));
 
 			jsonWrite.writeObject(builder.build());
 		}

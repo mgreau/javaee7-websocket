@@ -52,7 +52,7 @@ public class StarterService {
         	MatchEndpoint.send(new MatchMessage(m), match.getKey());
         	//if there is a winner, send result and reset the game
         	if (m.isFinished()){
-        		MatchEndpoint.sendBetResult(m.playerWithHighestSets(), match.getKey());
+        		MatchEndpoint.sendBetMessages(m.playerWithHighestSets(), match.getKey(), true);
         	}
     	}
     }

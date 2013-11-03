@@ -44,10 +44,8 @@ app.factory('MatchWebSocketService', function($window) {
 
 	// Bet on the winner of the match
 	service.sendBetMatchWinner = function(idMatch, player) {
-		var msg = "{ \"type\" : \"betMatchWinner\", \"name\" : \""
-			+ player + "\", \"idMatch\" : \""
-			+ idMatch + "\"}";
-		service.ws[idMatch].send(msg);
+		var jsonObj = {"type" : "betMatchWinner", "name" : player};
+		service.ws[idMatch].send(JSON.stringify(jsonObj));
 	};
 
 	// Close the WebSocket connection
@@ -71,7 +69,7 @@ app.factory('MatchWebSocketService', function($window) {
 	return service;
 });
 
-app.factory('MatchRESTService', function($http, $window) {
+app.factory('TournamentRESTService', function($http, $window) {
 	var appPath = $window.location.pathname.split('/')[1];
 	var myService = {
 		    async: function() {

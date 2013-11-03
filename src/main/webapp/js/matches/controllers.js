@@ -1,14 +1,15 @@
-function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
+function TournamentCtrl($scope, TournamentRESTService, MatchWebSocketService) {
 	
 	$scope.matches = [];
 	$scope.lives = new Object();
 	$scope.msg = new Object();
 	$scope.betMessages = new Object();
 	
-	MatchRESTService.async().then(function(d) {
+	TournamentRESTService.async().then(function(d) {
 	    $scope.matches = d;
 	  });
 	
+	//Messages sent by peer server are handled here
 	MatchWebSocketService.subscribe(function(idMatch, message) {
 		console.log(idMatch + " : callback");
 		try {
@@ -33,7 +34,9 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 	};
 
 	$scope.disconnect = function(idMatch) {
-		$scope.lives[idMatch] = "";
+		delete $scope.lives[idMatch] ;
+		delete $scope.msg[idMatch] ;
+		delete $scope.betMessages[idMatch] ;
 		MatchWebSocketService.disconnect(idMatch);
 	};
 	
@@ -63,12 +66,12 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 	};
 	
 	$scope.isBet = function(idMatch) {
-		return (angular.isUndefined($scope.lives[idMatch]) == false  
-				&& angular.equals($scope.lives[idMatch].betOn,"") == false);
+		return (angular.isUndefined($scope.betMessages[idMatch]) == false  
+				&& angular.equals($scope.betMessages[idMatch].winner,"") == false);
 	};
 	
 	$scope.isBetOnPlayer = function(idMatch, player) {
-		return $scope.isBet(idMatch) && angular.equals($scope.lives[idMatch].betOn, player); 
+		return $scope.isBet(idMatch) && angular.equals($scope.betMessages[idMatch].winner, player); 
 	};
 	
 	$scope.isFinished = function(idMatch) {
@@ -77,7 +80,7 @@ function TournamentCtrl($scope, MatchRESTService, MatchWebSocketService) {
 	};
 	
 	//win set have green background, grey for others
-	$scope.getSetColor = function(idMatch, player, idSet) {
+	$scope.cssSetColor = function(idMatch, player, idSet) {
 		var cssClass = "label label-default";
 			angular.forEach($scope.lives[idMatch].players, function(p, key){
 				  if (angular.equals(p.name, player.name) == false)
