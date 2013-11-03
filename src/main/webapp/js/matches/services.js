@@ -60,6 +60,21 @@ app.factory('MatchWebSocketService', function($window) {
 		}
 		return service.ws[idMatch].readyState;
 	};
+	
+	service.statusAsText = function(idMatch) {
+		var readyState = service.status(idMatch);
+		if (readyState == WebSocket.CONNECTING){
+			return "CONNECTING";
+		} else if (readyState == WebSocket.OPEN){
+			return "OPEN";
+		} else if (readyState == WebSocket.CLOSING){
+			return "CLOSING";
+		} else if (readyState == WebSocket.CLOSED){
+			return "CLOSED";
+		} else {
+			return "UNKNOW";
+		}
+	};
 
 	// handle callback
 	service.subscribe = function(callback) {

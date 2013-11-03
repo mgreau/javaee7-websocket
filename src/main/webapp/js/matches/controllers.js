@@ -11,7 +11,6 @@ function TournamentCtrl($scope, TournamentRESTService, MatchWebSocketService) {
 	
 	//Messages sent by peer server are handled here
 	MatchWebSocketService.subscribe(function(idMatch, message) {
-		console.log(idMatch + " : callback");
 		try {
 			var obj = JSON.parse(message);
 			//Match Live message from server
@@ -50,9 +49,9 @@ function TournamentCtrl($scope, TournamentRESTService, MatchWebSocketService) {
 	
 	$scope.getStatus = function(idMatch) {
 		if (angular.isUndefined($scope.msg[idMatch])){
-			$scope.msg[idMatch] = "CLOSED";
+			return "CLOSED";
 		}
-		return $scope.msg[idMatch];
+		return MatchWebSocketService.statusAsText(idMatch);
 	};
 	
 	//return true if there is no players received 
@@ -79,7 +78,36 @@ function TournamentCtrl($scope, TournamentRESTService, MatchWebSocketService) {
 				&& $scope.lives[idMatch].finished);
 	};
 	
-	//win set have green background, grey for others
+	$scope.whoIsTheWinner = function(idMatch) {
+		if ($scope.isFinished(idMatch) == false){
+			return null;
+		}
+		if (parseInt($scope.lives[idMatch].players[0].sets) > 
+				parseInt($scope.lives[idMatch].players[1].sets)){
+			return $scope.lives[idMatch].players[0].name;
+		} else {
+			return $scope.lives[idMatch].players[1].name;		
+		}
+	};
+	
+	// Last message
+	$scope.handleEndMessage = function(idMatch) {
+		var winner = $scope.whoIsTheWinner(idMatch);
+		if (winner == null){
+			return;
+		}
+		var msg = winner.concat(" WINS the match. ");
+		if ($scope.isBet(idMatch)){
+			if (angular.equals($scope.betMessages[idMatch].result, "OK")){
+				msg = msg.concat("CONGRATS !! You won your bet !");
+			} else {
+				msg = msg.concat("SORRY, you've lost your bet, try again :) ");
+			}
+		}
+		return msg;
+	};
+	
+	//winners set have green background, grey for others
 	$scope.cssSetColor = function(idMatch, player, idSet) {
 		var cssClass = "label label-default";
 			angular.forEach($scope.lives[idMatch].players, function(p, key){
@@ -92,6 +120,19 @@ function TournamentCtrl($scope, TournamentRESTService, MatchWebSocketService) {
 						  cssClass = 'label label-success';
 					  }
 				}, cssClass);
+		return cssClass;
+	};
+	
+	//last message color : blue if no bet, green if winning bet, red if loosing bet
+	$scope.cssEndMessage = function(idMatch) {
+		var cssClass = "alert alert-info";
+		if ($scope.isBet(idMatch)){
+			if (angular.equals($scope.betMessages[idMatch].result, "OK")){
+			  cssClass = 'alert alert-success';
+			} else if(angular.equals($scope.betMessages[idMatch].result, "KO")){
+			  cssClass = 'alert alert-danger';
+			} 
+		}
 		return cssClass;
 	};
 	
