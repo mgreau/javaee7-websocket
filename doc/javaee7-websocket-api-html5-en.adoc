@@ -9,7 +9,7 @@ v1.0, November 6, 2013: First English version
 :experimental:
 :mdash: &#8212;
 :language: asciidoc
-:link-demo: http://wildfly-mgreau.rhcloud.com/usopen/
+:link-demo: http://wildfly-mgreau.rhcloud.com/usopen/matches.html
 :link-html-fr: http://mgreau.com/posts/2013/09/27/javaee7-api-websocket-html5.html
 :link-html-en: http://mgreau.com/posts/2013/10/23/javaee7-api-websocket-html5-en.html
 :link-pdf-fr: http://mgreau.com/doc/javaee7-api-websocket-html5.pdf
@@ -348,7 +348,7 @@ In addition to the traditional management WebSocket lifecycle, the sending messa
 
 * each 'peer client' can connect to 1 or 4 live matches
 * each 'peer client' can disconnect from a match
-* at each point of a match, clients which are connected to this match, will receive datas (score, service...)
+* at each point of a match, clients which are connected to this match will receive datas (score, service...)
 * the 'peer client' may send a message to bet on the winner of the match
 * each time that one 'peer client' bet on a match, all others 'peers clients' which have bet on the same match, will receive a message with the total number of bettors
 * at the end of the match, 'peers client' receive a message containing the name of the winner and a specific message if they bet on this match
