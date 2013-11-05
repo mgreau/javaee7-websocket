@@ -446,17 +446,23 @@ public class MatchEndpoint {
 
 	private static final Logger logger = Logger.getLogger("MatchEndpoint");
 
-	/* Queue for all open WebSocket sessions */
-	static Queue<Session> queue = new ConcurrentLinkedQueue<>();
+     	/** All open WebSocket sessions */
+    	static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
+    
+    	/** Handle number of bets by match */
+    	static Map<String, AtomicInteger> nbBetsByMatch = new ConcurrentHashMap<>();
+    	
+    	@Inject StarterService ejbService;
 
 	@OnOpen
-	public void openConnection(Session session, 
-				@PathParam("match-id") String matchId) {	// <4>
-	    /* Register this connection in the queue */
-	    queue.add(session);
-	    session.getUserProperties().put(matchId, true);
-	    logger.log(Level.INFO, "Connection opened for game : " + matchId);
-	}
+    	public void openConnection(Session session, @PathParam("match-id") String matchId) { // <4>
+            logger.log(Level.INFO, "Session ID : " + session.getId() +" - Connection opened for match : " + matchId);
+        	session.getUserProperties().put(matchId, true);
+        	peers.add(session);
+       
+        	//Send live result for this match
+        	send(new MatchMessage(ejbService.getMatches().get(matchId)), matchId);
+    	}
 
 	public static void send(MatchMessage msg, String matchId) {
 	  try {
@@ -475,10 +481,28 @@ public class MatchEndpoint {
 	}
 
 	@OnMessage
-	public void message(final Session session, BetMessage msg) {	// <6>
-	    logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
-	    session.getUserProperties().put("betMatchWinner", msg);
-	}
+    	public void message(final Session session, BetMessage msg,  @PathParam("match-id") String matchId) {
+	        logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
+	        session.getUserProperties().put("bet", msg.getWinner());
+	        
+	        //Send betMsg with bet count
+	        if (!nbBetsByMatch.containsKey(matchId)){
+	             nbBetsByMatch.put(matchId, new AtomicInteger());
+	        }
+	        nbBetsByMatch.get(matchId).incrementAndGet();
+	        sendBetMessages(null, matchId, false);
+    	}
+	
+	@OnClose
+    	public void closedConnection(Session session, @PathParam("match-id") String matchId) {
+            if (session.getUserProperties().containsKey("bet")){
+                     nbBetsByMatch.get(matchId).decrementAndGet();
+                     sendBetMessages(null, matchId, false);
+            }
+	    /* Remove this connection from the queue */
+            peers.remove(session);
+            logger.log(Level.INFO, "Connection closed.");
+       }
 ...
 }
 
