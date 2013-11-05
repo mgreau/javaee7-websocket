@@ -1,4 +1,4 @@
-= Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS
+= Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS on WildFly
 Maxime Greau <contact@mgreau.com>
 2013-09-27
 :toc:
@@ -26,14 +26,15 @@ Maxime Greau <contact@mgreau.com>
 :link-arungupta-twitter: https://twitter.com/arungupta
 :link-javaone2013-keynote: https://blogs.oracle.com/javaone/entry/the_javaone_2013_technical_keynote
 :link-atmosphere: http://async-io.org/download.html
+:link-wildfly: http://wildfly.org
 
 [NOTE]
 .Overview
 ====
-This blog post describes the *{link-jsr356}[Java API for WebSocket Protocol (JSR 356)]* (which is one of four newest JSRs for the *{link-javaee7}[Java EE 7]* platform) and provides a concrete application deployed on WildFly 8 and {link-demo}[available online on OpenShift].
+This blog post describes the *{link-jsr356}[Java API for WebSocket Protocol (JSR 356)]* (which is one of four newest JSRs for the *{link-javaee7}[Java EE 7]* platform) and provides a concrete application deployed on {link-wildfly}[WildFly 8] and {link-demo}[available online on OpenShift].
 
 * {link-pdf-en}[Download an English PDF version]
-* [FR] Ce post en version française est basée uniquement sur la démonstration avec l'API Javascript sans AngularJS {link-html-fr}[Version FR. HTML] or {link-pdf-fr}[Version Fr PDF]
+* [FR] La version française ({link-html-fr}[HTML] ou {link-pdf-fr}[PDF]) de ce post est basée uniquement sur la démonstration avec l'API Javascript sans AngularJS.
 ====
 
 Once you will have read this post, you will be able to understand {link-arungupta-twitter}[Arun Gupta]'s definition about what is it possible to do with WebSocket technology.
