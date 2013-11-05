@@ -1,0 +1,667 @@
+= Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS
+Maxime Gréau - http://mgreau.com
+2013-09-27
+:toc:
+:toc-placement: preamble
+:toc-title: Table of Contents
+:source-highlighter: coderay
+:imagesdir: ./img
+:experimental:
+:mdash: &#8212;
+:language: asciidoc
+:link-demo: http://wildfly-mgreau.rhcloud.com/usopen/
+:link-html-fr: http://mgreau.com/posts/2013/09/27/javaee7-api-websocket-html5.html
+:link-html-en: http://mgreau.com/posts/2013/10/23/javaee7-api-websocket-html5-en.html
+:link-pdf-fr: http://mgreau.com/doc/javaee7-api-websocket-html5.pdf
+:link-pdf-en: http://mgreau.com/doc/javaee7-api-websocket-html5-en.pdf
+:link-javaee7: http://jcp.org/en/jsr/detail?id=342
+:link-jsr356: http://jcp.org/en/jsr/detail?id=356
+:link-adoptjsr-jsr356: https://glassfish.java.net/adoptajsr/jsr356.html
+:link-w3c-api: http://w3.org/TR/websockets/
+:link-rfc6455: http://tools.ietf.org/html/rfc6455
+:link-rfc2616: http://tools.ietf.org/html/rfc2616
+:link-rfc2616-upgrade: http://tools.ietf.org/html/rfc2616#section-14.42
+:link-arungupta-devoxxuk: http://www.parleys.com/play/51c1cceae4b0ed8770356828/chapter4/about
+:link-arungupta-jugsf: http://www.youtube.com/watch?v=QqbuDFIT5To
+:link-arungupta-twitter: https://twitter.com/arungupta
+:link-javaone2013-keynote: https://blogs.oracle.com/javaone/entry/the_javaone_2013_technical_keynote
+:link-atmosphere: http://async-io.org/download.html
+
+[NOTE]
+.Overview
+====
+This blog post describes the *{link-jsr356}[Java API for WebSocket Protocol (JSR 356)]* (which is one of four newest JSRs for the *{link-javaee7}[Java EE 7]* platform) and provides a concrete application deployed on WildFly 8 and {link-demo}[available online on OpenShift].
+
+* {link-pdf-en}[Download an English PDF version]
+* [FR] Ce post en version française est basée uniquement sur la démonstration avec l'API Javascript sans AngularJS {link-html-fr}[Version FR. HTML] or {link-pdf-fr}[Version Fr PDF]
+====
+
+Once you will have read this post, you will be able to understand {link-arungupta-twitter}[Arun Gupta]'s definition about what is it possible to do with WebSocket technology.
+
+----
+"WebSocket gives you bidirectionnal, full duplex, communication channel over a single TCP."
+-- Arun Gupta (Java EE Evangelist chez Oracle) - Devoxx UK 2013
+----
+
+== Java EE 7 overview
+The *Java Platform Enterprise Edition* was released in Version 7 (Java EE 7) in *June 2013*.
+In line with the two previous versions (Java EE 5 and Java EE 6) *Java EE 7* always proposes to simplify the work of the developer.
+This version decorates previous versions with 3 main objectives :
+
+* embraces *HTML5* (WebSocket API, JSON-P API, JAX-RS)
+* provide an *even better productivity* to developer (JMS)
+* meeting *enterprise demands* (Batch API, Concurrency Utilities)
+
+[[javaee7_intro]]
+.The 3 goals of Java EE 7
+image::javaee7_intro.png[Java EE 7 goals]
+
+Java Platform, Entreprise Edition 7 (JSR 342) can be summmed up around :
+
+* 4 newest specifications : *+Java API for WebSocket 1.0+*, *+Java API for JSON Processing 1.0+* , *+Batch Applications 1.0+* and *+Concurrency Utilities for Java EE 1.0+*
+* 3 specifications with major updates : *+JMS 2.0+*, *+JAX-RS 2.0+* and *+EL 3.0+*	
+* and 6 specifications with minor updates : *+JPA 2.1+*, *+Servlet 3.1+*, *+EJB 3.2+*, *+CDI 1.1+*, *+JSF 2.2+* and *+Bean Validation 1.1+*
+
+
+== DEMO : AngularJS HTML5/JSR-356 API application deployed on WildFly 8 (OpenShift)
+
+If you want to see right away what it looks like, you can access +{link-demo}[the online application]+ whose code will be in part explained in this article.
+It's an application that give you the ability :
+
+* to watch one or several tennis matches in *live mode* (Quarter Final U.S. Open 2013) 
+** click on each match that you want to access live
+** click on exit button to disconnect from a specific match
+* to bet on the winner of the match
+** each time a user bet on the same match, the counter is incremented
+** at this end of the match, you will see the result of your bet
+
+You will say: '"Nothing special !"', and you're right :)
+
+At first glance, it sounds like something already seen in many of today's applications, but it's the technique used behind which does matter because, as you will see below, everything is based around the *standard of the new WebSocket protocol (ws:// ou wss://)* and not on "HTTP hacking".
+
+[NOTE]
+.The technologies used for the development of this application are : 
+====
+* Frontend : +HTML5+, +CSS+, +Javascript (WebSocket API)+ with 'Bootstrap CSS and +AngularJS+'
+* Backend : +Java API for WebSocket+, +EJB+, +JSON-P+, +JAX-RS+
+====
+
+[[websocket_example]]
+.US Open Application  - Implementation of WebSocket (Java API et Javascript API)
+image::websocket_wildfly_angularjs_tennis.png[Implementation of WebSocket (Java API et Javascript API), link="{link-demo}"]
+
+Nope! This demonstration is *not a chat application :)*
+It's obvious that the "chat demo" is the one that first comes to mind to illustrate the use of WebSocket technology. However, there are many other use cases, such as collaborative work on a text document online or online games like chess presented at the {link-javaone2013-keynote}[JavaOne 2013 keynote].
+
+[TIP]
+====
+'This application is available on the Cloud thanks to https://www.openshift.com/[OpenShift], the cloud computing PaaS product by RedHat. It's deployed on WildFly 8.0.0-Beta1 (normaly certified Java EE 7 to the end of 2013). To set up an application server like WildFly on OpenShit, you just need to read https://www.openshift.com/blogs/deploy-websocket-web-applications-with-jboss-wildfly[this Shekhar Gulati's blog post]'
+====
+
+== WebSocket (WS) : a new protocol different from HTTP
+
+{link-rfc2616}[HTTP] is the standard protocol for the Web, it's very effective for a lot of use cases but, nevertheless, has *some drawbacks* in the case of *interactive Web applications* :
+
+* *half-duplex* : based on the request/response pattern, the client sends a request and the server performs processing before sending a response, the client is forced to wait for a server response
+* *verbose* : a lot of information are send in HTTP headers associated with the message, both in the HTTP request and in the HTTP response
+* in order to add a *server push* mode, you need to use workaround (polling, long polling, Comet/Ajax) since there is no standard
+
+This protocol is not optimized to scale on large applications that have significant needs of real-time bi-directional communication. This is why the *new WebSocket protocol* offers more advanced features than HTTP because it is:
+
+* based on *+1 unique TCP connection between 2 peers+* (whereas each HTTP request/response needs a new TCP connection)
+* *+bidirectionnal+* : client can send message to server and server can also send message to client
+* *+full-duplex+* : client can send multiple messages to server, as well as server to client without waiting for a response from each other
+
+[WARNING]
+====
+'The term *client* is used only to define the one that initiate the connection. Once the connection is established, client and server become both *peers*, with the same capacity.'
+====
+
+The WebSocket protocol was originally intended to be part of the HTML5 specification but as HTML5 will be officially released in 2014, the WebSocket protocol is finally set, as well as HTTP protocol, by an IETF specification, {link-rfc6455}[with RFC 6455].
+
+As shown in the diagram below, the *WebSocket protocol works in two phases* named :
+
+. *+handshake+*
+. *+data transfer+*
+
+[[websocket_protocol]]
+.How does the WebSocket protocol work
+image::WebSocket_Protocol.png[Diagram which explain how does the WebSocket protocol work,550]
+
+=== Opening Handshake
+The *Opening Handshake* phase is a *unique HTTP request/response* between the one who initiate the connection (peer client) and the peer server. This HTTP exchange is specific because it uses the concept of {link-rfc2616-upgrade}[*Upgrade, defined in the HTTP specification*].
+The principle is simple : *Upgrade HTTP* allows the client to ask the server to change the communication protocol and thus ensure that the client and server can discuss using a protocol other than HTTP.
+
+[[eg1-callouts]]
+.HTTP Handshake sample request
+====
+[source, text]
+----
+GET /usopen/matches/1234 HTTP/1.1     # <1>
+Host: wildfly-mgreau.rhcloud.com:8000  # <2>	
+Upgrade: websocket  # <3>
+Connection: Upgrade # <4>
+Origin: http://wildfly-mgreau.rhcloud.com
+Sec-WebSocket-Key:0EK7XmpTZL341oOh7x1cDw==
+Sec-WebSocket-Version:13
+----
+<1> HTTP GET method and HTTP 1.1 version required
+<2> Host used for the WebSocket connection
+<3> Request to upgrade to the WebSocket protocol
+<4> Request to upgrade from HTTP to another protocol
+
+====
+
+[[eg2-callouts]]
+.HTTP Handshake Response sample
+====
+[source, text]
+---- 
+HTTP/1.1 101 Switching Protocols # <1>
+Connection:Upgrade
+Sec-WebSocket-Accept:SuQ5/hh0kStSr6oIzDG6gRfTx2I=
+Upgrade:websocket <2>
+----
+<1> HTTP Response Code 101 : server is compatible and accept to send messages through another protocol
+<2> Upgrade to the WebSocket protocol is accepted
+====
+
+[IMPORTANT]
+====
+'When the upgrade request from HTTP to WebSocket protocol is approved by the endpoint server, it's no longer possible to use HTTP communication, all exchanges have to be made through the WebSocket protocol.'
+====
+
+=== Data transfer
+Once the *handshake* is approved, the use of WebSocket protocol is established. There are an open connection on the 'peer server side' as well on the 'peer client side', callback handlers are called to initiate the communication. + 
+The *Data transfer* can now begin, so the 2 peers can exchange messages in a bidirectionnal and full-duplex communication.
+
+As shown in the diagram named *Figure 3*, the +peer server+ can send multiple messages ('in this example : 1 message to each point of the game') without any +peer client+ response and the peer client can also send messages at any time ('in this example : betting on the winner of the match').
+Each peer can send a specific message to close the connection. +
+
+With Java EE7 Platform, the +peer server side+ code is written in *Java* while the +peer client side+ code is in *Java or Javascript*.
+
+=== Closing Handshake
+
+This phase can be initiated by both peer. A peer that want to close the communication need to send a close control frame and it will received a close control frame too as a response.
+
+== WebSocket Javascript API (Client)
+
+To communicate from a Web application with a server using the WebSocket protocol, it's necessary to use a *client Javascript API*. It's the role of W3C to define this API.
+The W3C specification for the {link-w3c-api}[JavaScript WebSocket API] is being finalized. http://www.w3.org/TR/websockets/#websocket[The WebSocket interface] provides, among others, the following:
+
+* an attribute to define the connection URL to the server Endpoint (+url+)
+* an attribute to know the status of the connection (+readyState+ : CONNECTING, OPEN, CLOSING, CLOSED)
+* some *Event Handler* in connection with the WebSocket lifecycle, eg : 
+** the Event Handler +onopen+ is called when a new connection is open
+** the Event Handler +onerror+ is called when an error occured during the communication
+** the Event Handler +onmessage+ is called when a message arrives from the server
+* methods (+send(DOMString data)+, +send(Blob data)+) with which it's possible to send different type of flow(text, binary) to the Endpoint server
+
+
+[[eg3-callouts]]
+.Javascript source code example, from http://websocket.org
+====
+[source, javascript]
+---- 
+var wsUri = "ws://echo.websocket.org/"; 
+
+function testWebSocket() { 
+
+	websocket = new WebSocket(wsUri); 
+	websocket.onopen = function(evt) { onOpen(evt) }; 
+	websocket.onclose = function(evt) { onClose(evt) }; 
+	websocket.onmessage = function(evt) { onMessage(evt) }; 
+	websocket.onerror = function(evt) { onError(evt) }; }  
+}
+
+function onOpen(evt) { 
+	writeToScreen("CONNECTED"); 
+	doSend("WebSocket rocks"); 
+}  
+function onClose(evt) { 
+	writeToScreen("DISCONNECTED"); 
+}  
+function onMessage(evt) { 
+	writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>'); 
+	websocket.close(); 
+}  
+
+function onError(evt) { 
+	writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+}  
+function doSend(message) { 
+	writeToScreen("SENT: " + message);  
+	websocket.send(message); 
+}
+----
+====
+
+== JSR 386 : Java API for WebSocket protocol
+
+As the W3C defines how to use WebSocket in Javascript, the *Java Communitee Process (JCP)* does the same for the Java world via the JSR 386. +
+JSR 356 defines a {link-jsr356}[Java API for WebSocket protocol] which be part of *Java EE Web Profile* and give the ability to :
+
+* create a +*WebSocket Endpoint*+ (server or client), the name given to the Java component that can communicate via the WebSocket protocol
+* the choice of *annotation* or programmatic approach
+* *send and consume messages* controls, text or binary via this protocol
+** manage the message as a complete message or a sequence of partial messages
+** send or receive messages as Java objects (concept of *encoders / decoders*)
+** send messages *synchronously or asynchronously*
+* configure and manage *WebSocket Session* (timeout, cookies...)
+
+NOTE: 'The open source JSR-356 RI (Reference Implementation) is https://tyrus.java.net/[the project Tyrus]'
+
+=== WebSocket Server Endpoint
+
+The transformation of a Plain Old Java Object (POJO) to a *Server WebSocket Endpoint* (namely capable of handling requests from different customers on the same URI) is *very easy* since you only have to annotate the Java Class with *@ServerEndpoint* and one method with *@OnMessage* :
+
+====
+[source, java]
+----
+import javax.websocket.OnMessage;
+import javax.websocket.ServerEndpoint;
+
+@ServerEndpoint("/echo") // <1>
+public class EchoServer {
+
+	@OnMessage // <2>
+	public String handleMessage(String message){
+		return "Thanks for the message: " + message;
+	}
+
+}
+----
+<1> @ServerEndpoint transforms this POJO into a WebSocket Endpoint, the *value* attribute is mandatory in order to set the access URI to this Endpoint
+<2> the 'handleMessage' method will be invoked for each received message
+====
+
+=== Annotations
+This Java API provides several types of annotations to be fully compatible with the WebSocket protocol :
+
+[cols="2", options="header"] 
+|===
+|Annotation
+|Role
+|@ServerEndpoint
+|Declare a Server Endpoint
+|@ClientEndpoint
+|Declare a Client Endpoint
+|@OnOpen
+|Declare this method handles open events
+|@OnMessage
+|Declare this method handles Websocket messages
+|@OnError
+|Declare this method handles error
+|@OnClose
+|Declare this method handles WebSocket close events
+|===
+
++@ServerEndpoint+ attributes are listed below :
+
+value:: relative URI or template URI (ex: "/echo", "/matches/{match-id}")
+decoders:: list of message decoder classnames
+encoders:: liste of message encoder classnames
+subprotocols:: list of the names of the supported subprotocols (ex: http://wamp.ws)
+
+=== Encoders and Decoders
+
+As described earlier in this article, the Endpoint server can receive different types of content in messages : data in text format (JSON, XML ...) or binary format. +
+To effectively manage the messages from 'peers client' or to them in the application business code, it is possible to create *Encoders and Decoders* Java classes.
+
+Whatever the transformation algorithm, it will then be possible to transform  :
+
+* the business POJO to flow in the desired format for communication (JSON, XML, Binary ...)
+* inflows in specific format(JSON, XML..) to the business POJO
+
+Thus, the application code is structured so that the business logic is not affected by the type and format of messages exchanged between the 'peer server' and 'peers client' flows.
+
+A concrete example is presented later in the article.
+
+=== WebSocket Client Endpoint
+
+This Java API also offers support for creating client-side Java Endpoints.
+
+[[eg4-callouts]]
+.Java Client Endpoint sample
+====
+[source, java]
+----
+@ClientEndpoint
+public class HelloClient {
+
+	@OnMessage 
+	public String message(String message){
+		// code
+	}
+}
+
+WebSocketContainer c = ContainerProvider.getWebSocketContainer();
+c.connectToServer(HelloClient.class, "hello");
+----
+====
+
+== US OPEN Application
+
+The sample application is deployed as a WAR outcome of a build with Apache Maven.
+In addition to the traditional management WebSocket lifecycle, the sending messages workflow is as follows :
+
+* at each point of the match, 'peers clients' receive data match (score, service...)
+* the 'peer client' may send a message to bet on the winner of the match
+* at the end of the match, 'peers client' receive a message containing the name of the winner
+
+*All messages are exchanged in JSON format* + 
+
+The project structure is as follows :
+
+[[eg5-callouts]]
+.Maven project structure
+====
+[source, text]
+----
++ src/main/java
+   |+ com.mgreau.wildfly.websocket
+      |+ decoders       
+         |- MessageDecoder.java   // <1>
+      |+ encoders       // <2>
+         |- BetMessageEncoder.java   
+         |- MatchMessageEncoder.java 
+      |+ messages       // <3>
+         |- BetMessage.java
+         |- MatchMessage.java
+         |- Message.java
+      |- MatchEndpoint.java    // <4>
+      |- StarterService.java   // <5>
+      |- TennisMatch.java      // <6>
++ src/main/resources
++ scr/main/webapp
+   |+ css
+   |+ images   
+   |- index.html   
+   |- websocket.js  // <7>
+pom.xml		
+----
+<1> Decode JSON messages sent from the 'peer client' (about bet on the winner) to a POJO ('BetMessage')
+<2> Encode in JSON format (via JSON-P), all messages about the winner and the match details for 'peers clients'
+<3> POJOs to handle messages sent between peers 
+<4> The application WebSocket Server Endpoint ('peer server')
+<5> EJB @Startup in order to initialize this application at deployment time
+<6> POJO to handle informations about the match
+<7> File containing the implementation of Javascript API for WebSocket protocol to handle the client side of the communication
+====
+
+=== Maven dependencies for Java EE 7 API
+
+[[eg6-callouts]]
+.pom.xml with Java EE 7 dependencies
+====
+[source, xml]
+----
+<project>
+...
+<properties>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<!-- Java EE 7 -->
+	<javaee.api.version>7.0</javaee.api.version>
+</properties
+
+<dependencies>
+	<dependency>
+		<groupId>javax</groupId> <!--1-->
+		<artifactId>javaee-api</artifactId>
+		<version>${javaee.api.version}</version>
+		<scope>provided</scope>
+	</dependency>
+</dependencies>
+...
+</project>
+----
+<1> It's important to use the Java EE 7 dependencies to be able to deploy the same application in multiple Java EE application servers (WildFly, Glassfish...) *without changing code*.
+====
+
+=== Add Server Endpoint
+
+This endpoint can receive messages about betting on the winner of the match and it can also send to 'peers client' all informations about the course of the match.
+
+[[eg7-callouts]]
+.Server Endpoint : MatchEndpoint.java
+====
+[source,java]
+----
+@ServerEndpoint( 						
+		value = "/matches/{match-id}",  // <1>
+		        decoders = { MessageDecoder.class }, // <2>
+		        encoders = { MatchMessageEncoder.class, BetMessageEncoder.class } // <3>
+		)
+public class MatchEndpoint {
+
+	private static final Logger logger = Logger.getLogger("MatchEndpoint");
+
+	/* Queue for all open WebSocket sessions */
+	static Queue<Session> queue = new ConcurrentLinkedQueue<>();
+
+	@OnOpen
+	public void openConnection(Session session, 
+				@PathParam("match-id") String matchId) {	// <4>
+	    /* Register this connection in the queue */
+	    queue.add(session);
+	    session.getUserProperties().put(matchId, true);
+	    logger.log(Level.INFO, "Connection opened for game : " + matchId);
+	}
+
+	public static void send(MatchMessage msg, String matchId) {
+	  try {
+	    /* Send updates to all open WebSocket sessions for this match */
+	    for (Session session : queue) {
+    	  if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
+	        if (session.isOpen()){
+		      session.getBasicRemote().sendObject(msg);	// <5>
+		      logger.log(Level.INFO, "Score Sent: {0}", msg);
+	        }
+    	  }
+	    }
+	  } catch (IOException | EncodeException e) {
+	    logger.log(Level.INFO, e.toString());
+	  }   
+	}
+
+	@OnMessage
+	public void message(final Session session, BetMessage msg) {	// <6>
+	    logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
+	    session.getUserProperties().put("betMatchWinner", msg);
+	}
+...
+}
+
+----
+<1>  Access URI to this Endpoint, as the application context-root is '/usopen', the final URL looks like this : +ws://<host>:<port>/usopen/matches/1234+
+<2> 'MessageDecoder' transforms the incoming JSON flow (about the bet on the winner) into a POJO 'BetMessage'
+<3> This 2 encoders add the ability to transform from 'MatchMessage' POJO and 'BetMessage' POJO to messages in JSON format
+<4> +@PathParam+ annotation allows to extract part of the WebSocket request and pass the value (id match) as the parameter of the method, it is possible to manage several match with multiple clients for each match.
+<5> Send, to connected peers, messages about the course of the match. Thanks to the 'MatchMessageEncoder' object, simply pass the 'MatchMessage' object.
+<6> Handle received messages about the bet on the winner, thanks to the 'MessageDecoder' object, one of the parameters of this method is a 'BetMessage' object
+====
+
+=== Encodes and Decodes messages
+
+To encode or decode messages exchanged between peers, simply implement the appropriate interface according to the message type (text, binary) and direction of processing (encoding, decoding), then redefine the associated method. +
+In the example below, it's the *encoder* for MatchMessage POJO to JSON format. The API used to perform this treatment is also a new API released with Java EE 7 : http://jcp.org/en/jsr/detail?id=353[Java API for JSON Processiong (JSON-P)]
+
+[[eg8-callouts]]
+.Text Encoder : MatchMessageEncoder.java
+====
+[source, java]
+--
+public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
+
+	@Override
+	public String encode(MatchMessage m) throws EncodeException {
+		StringWriter swriter = new StringWriter();
+		try (JsonWriter jsonWrite = Json.createWriter(swriter)) {
+			JsonObjectBuilder builder = Json.createObjectBuilder();
+			builder.add(
+				"match",
+				Json.createObjectBuilder()
+					.add("serve", m.getMatch().getServe())
+					.add("title", m.getMatch().getTitle())
+					...
+			}
+
+			jsonWrite.writeObject(builder.build());
+		}
+		return swriter.toString();
+	}
+}
+--
+====
+
+=== HTML5 Web Client
+The single HTML page of this application loads the *websocket.js* file to implement the Javascript WebSocket API and thus interact with the Java Server Endpoint.
+
+[[eg9-callouts]]
+.API Javascript implemented into websocket.js
+====
+[source, javascript, options="nowrap"]
+--
+var wsUrl;
+if (window.location.protocol == 'https:') {  // <1>
+	wsUrl = 'wss://' + window.location.host + ':8443/usopen/matches/1234';
+} else {
+	wsUrl = 'ws://' + window.location.host + ':8000/usopen/matches/1234';
+}
+
+function createWebSocket(host) {
+	if (!window.WebSocket) {    // <2>
+	...
+	} else {
+		socket = new WebSocket(host);   // <3>
+		socket.onopen = function() {
+			document.getElementById("m1-status").innerHTML = 'CONNECTED...';
+		};
+		socket.onclose = function() {
+			document.getElementById("m1-status").innerHTML = 'FINISHED';
+		};
+		...
+		socket.onmessage = function(msg) {
+			try { 
+				console.log(data);
+				var obj = JSON.parse(msg.data);     // <4>
+				if (obj.hasOwnProperty("match")){   // <5>
+					//title
+					m1title.innerHTML = obj.match.title;
+					// comments
+					m1comments.value = obj.match.comments;
+					// serve
+					if (obj.match.serve === "player1") {
+						m1p1serve.innerHTML = "S";
+						m1p2serve.innerHTML = "";
+					} else {
+						m1p1serve.innerHTML = "";
+						m1p2serve.innerHTML = "S";
+					}
+					..
+				}
+				...
+			} catch (exception) {
+				data = msg.data;
+				console.log(data);
+			}
+		}
+	}
+} 
+--
+<1> Choose the appropriate WebSocket protocol according to the HTTP protocol currently used (secure or not)
+<2> Check if the browser supports WebSocket API
+<3> Create the WebSocket object
+<4> Try to parse the JSON message sent by 'peer server', into the function called by +onmessage+ Event Handler  
+<5> Check the received object type (MatchMessage or BetMessage) to achieve adequate treatment with DOM
+====
+
+[NOTE]
+====
+To find out which browsers are compatible with *WebSocket API* http://caniuse.com/#search=websocket[visit the website caniuse.com]. Today, the latest versions of browsers are compatible excepted for Android and Opera Mini Browser, which represent, both together, only 3% of web traffic.
+====
+
+=== Source code on Github
+You can *fork this project on Github* at +*https://github.com/mgreau/javaee7-websocket*+
+
+This sample application is very basic, there could be many improvements like : managing a tournament with several games, betting on other criteria, see betting of other users in live...
+
+[TIP]
+====
+'A feature that could be interesting technically, would be to create a new type of *bet based on the coordinates of each winning point*. Simply draw the ground through the HTML5 Canvas API and manage the coordinates selected by the user (such as winning point) and then compare with the actual coordinates at a point winner. '
+====
+
+=== Build and Deploy the WAR
+
+[IMPORTANT]
+====
+Prerequisite : 
+
+* JDK 7
+* Apache Maven 3.0.4+
+* Java EE 7 Application Server : Wildfly 8 ou Glassfish 4
+====
+In order to build the WAR, you just have to execute the Maven command below ;
+[source, text]
+--
+mvn clean package
+--
+
+If your application server is WildFly, you can quickly deploy the WAR with the command below (WildFly has to be started) :
+
+[source, text]
+--
+mvn jboss-as:deploy
+--
+
+The usopen application is then available at : http://localhost:8080/usopen/
+
+== Benchmark : WebSocket VS REST
+In order to have some metrics about the performance of this new protocol, Arun Gupta has developed https://github.com/arun-gupta/javaee7-samples/tree/master/websocket/websocket-vs-rest[an application that allows compare the execution time of] the same treatment performed by WebSocket code and REST code.
+
+Each endpoint (REST Endpoint and WebSocket Endpoint) just do an "echo" so they only return the flows they receive. The web interface of the application allows you to define the size of the message and the number of times that the message must be sent before the end of the test.
+
+The benchmark results, shown below, are quite eloquent :
+
+[cols="3*", options="header"] 
+|===
+|Request
+|Total execution time + 
+*REST Endpoint*
+|Total execution time +
+*WebSocket Endpoint*
+|Sending 10 messages of 1 byte
+|220 ms
+|7 ms
+|Sending 100 messages of 10 bytes
+|986 ms
+|57 ms
+|Sending 1000 messages of 100 bytes
+|10 210 ms
+|179 ms
+|Sending 5000 messages of 1000 bytes
+|54 449 ms
+|1202 ms
+|===
+
+
+== References about WebSocket
+
+I would particularly recommend {link-arungupta-twitter}[Arun Gupta]'s conferences, which allow you in less than 1 hour to discover and understand the WebSocket technology in general and the Java API for WebSocket. +
+For more advanced information, the ideal is IETF, W3C and Java specifications.
+
+[bibliography]
+- {link-rfc6455}[RFC 6455: The WebSocket Protocol] - 'IETF Specification'
+- {link-w3c-api}[W3C: The WebSocket API] - 'W3C Specification' (Candidate Recommandation)
+- {link-jsr356}[JSR 356: Java API for WebSocket Protocol] - 'Java Specification'
+- {link-adoptjsr-jsr356}[Adopt a JSR - JSR 356]
+- {link-arungupta-jugsf}[Java EE 7 & WebSocket API] - 'Arun Gupta's conference @ SF' (from the 46th minute)
+- {link-arungupta-devoxxuk}[Getting Started with WebSocket and SSE] - 'Arun Gupta's conference @ Devoxx UK 2013'
+
+'This article was structured based on the UK 2013 Devoxx conference.'
+
+== Conclusion
+
+This article has introduced, through a concrete example, *the WebSocket protocol, the HTML5 WebSocket API and Java API for WebSocket released with Java EE 7*. It was already possible to use WebSocket with Java frameworks like {link-atmosphere}[Atmosphere] but lacked a standard. +
+Today all *standards are completed or about to be*, this new technology meets a specific need and is promising in terms of performance. To be heavily used, this protocol will need to be allowed in businesses where often only the HTTP protocol is permitted.
+
