@@ -380,11 +380,11 @@ The project structure is as follows :
    |+ css
    |+ images   
    |+ js
-         |+ matches    // <7>
-                 |- app.js
-                 |- controllers.js
-                 |- services.js
-         |- websocket.js  // <8>
+      |+ matches    // <7>
+         |- app.js
+         |- controllers.js
+         |- services.js
+      |- websocket.js  // <8>
    |- index.html   
    |- matches.html
 pom.xml		
@@ -481,8 +481,9 @@ public class MatchEndpoint {
 	}
 
 	@OnMessage
-    	public void message(final Session session, BetMessage msg,  @PathParam("match-id") String matchId) {
-	        logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
+    	public void message(final Session session, BetMessage msg,  
+    					@PathParam("match-id") String matchId) {
+        logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
 	        session.getUserProperties().put("bet", msg.getWinner());
 	        
 	        //Send betMsg with bet count
@@ -494,7 +495,8 @@ public class MatchEndpoint {
     	}
 	
 	@OnClose
-    	public void closedConnection(Session session, @PathParam("match-id") String matchId) {
+    	public void closedConnection(Session session, 
+    	                                @PathParam("match-id") String matchId) {
             if (session.getUserProperties().containsKey("bet")){
                      nbBetsByMatch.get(matchId).decrementAndGet();
                      sendBetMessages(null, matchId, false);
@@ -548,7 +550,7 @@ public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 --
 ====
 
-=== HTML5 Web Client
+=== HTML5 Web Client (single match - index.html)
 The single HTML page of this application loads the *websocket.js* file to implement the Javascript WebSocket API and thus interact with the Java Server Endpoint.
 
 [[eg9-callouts]]
@@ -614,6 +616,11 @@ function createWebSocket(host) {
 ====
 To find out which browsers are compatible with *WebSocket API* http://caniuse.com/#search=websocket[visit the website caniuse.com]. Today, the latest versions of browsers are compatible excepted for Android and Opera Mini Browser, which represent, both together, only 3% of web traffic.
 ====
+
+=== AngularJS Client (several matches - matches.html)
+As we saw on the beginning of this post, there is a version with AngularJS. 
+
+NOTE: This post is not a tutorial about AngularJS since it's my first experience with this framework, so the
 
 === Source code on Github
 You can *fork this project on Github* at +*https://github.com/mgreau/javaee7-websocket*+
