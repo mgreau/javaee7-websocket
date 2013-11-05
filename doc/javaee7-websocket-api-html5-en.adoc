@@ -1,6 +1,6 @@
 = Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS on WildFly
 Maxime Greau <contact@mgreau.com>
-2013-09-27
+v1.0, November 6, 2013: First English version
 :toc:
 :toc-placement: preamble
 :toc-title: Table of Contents
