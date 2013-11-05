@@ -1,6 +1,6 @@
 = WebSocket Java EE 7 - AngularJS - WildFly 8
 Maxime Gréaun <@mgreau>
-:imagesdir: ./img
+:imagesdir: ./doc/img
 
 This project shows how to use the WebSocket Protocol with :
 
