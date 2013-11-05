@@ -1,5 +1,5 @@
 = Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS
-Maxime Gréau - http://mgreau.com
+Maxime Greau - http://mgreau.com
 2013-09-27
 :toc:
 :toc-placement: preamble
