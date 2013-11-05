@@ -1,5 +1,5 @@
 = Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS
-Maxime Greau mgreau.com
+Maxime Greau <contact@mgreau.com>
 2013-09-27
 :toc:
 :toc-placement: preamble
@@ -63,7 +63,7 @@ Java Platform, Entreprise Edition 7 (JSR 342) can be summmed up around :
 * and 6 specifications with minor updates : *+JPA 2.1+*, *+Servlet 3.1+*, *+EJB 3.2+*, *+CDI 1.1+*, *+JSF 2.2+* and *+Bean Validation 1.1+*
 
 
-== DEMO : AngularJS HTML5/JSR-356 API application deployed on WildFly 8 (OpenShift)
+== DEMO : AngularJS - HTML5 / JSR-356 API application deployed on WildFly 8 (OpenShift)
 
 If you want to see right away what it looks like, you can access +{link-demo}[the online application]+ whose code will be in part explained in this article.
 It's an application that give you the ability :
@@ -121,7 +121,7 @@ The WebSocket protocol was originally intended to be part of the HTML5 specifica
 
 As shown in the diagram below, the *WebSocket protocol works in two phases* named :
 
-. *+handshake+*
+. *+handshake+ (open and close)*
 . *+data transfer+*
 
 [[websocket_protocol]]
@@ -175,14 +175,14 @@ Upgrade:websocket <2>
 Once the *handshake* is approved, the use of WebSocket protocol is established. There are an open connection on the 'peer server side' as well on the 'peer client side', callback handlers are called to initiate the communication. + 
 The *Data transfer* can now begin, so the 2 peers can exchange messages in a bidirectionnal and full-duplex communication.
 
-As shown in the diagram named *Figure 3*, the +peer server+ can send multiple messages ('in this example : 1 message to each point of the game') without any +peer client+ response and the peer client can also send messages at any time ('in this example : betting on the winner of the match').
+As shown in the diagram named *Figure 3*, the +peer server+ can send multiple messages ('in this example : 1 message to each point of the game, 1 message each time any user bet on this game and 1 message at the end of the match') without any +peer client+ response and the peer client can also send messages at any time ('in this example : betting on the winner of the match').
 Each peer can send a specific message to close the connection. +
 
 With Java EE7 Platform, the +peer server side+ code is written in *Java* while the +peer client side+ code is in *Java or Javascript*.
 
 === Closing Handshake
 
-This phase can be initiated by both peer. A peer that want to close the communication need to send a close control frame and it will received a close control frame too as a response.
+This phase *can be initiated by both peer*. A peer that want to close the communication need to send a *close control frame* and it will received a close control frame too as a response.
 
 == WebSocket Javascript API (Client)
 
@@ -345,9 +345,12 @@ c.connectToServer(HelloClient.class, "hello");
 The sample application is deployed as a WAR outcome of a build with Apache Maven.
 In addition to the traditional management WebSocket lifecycle, the sending messages workflow is as follows :
 
-* at each point of the match, 'peers clients' receive data match (score, service...)
+* each 'peer client' can connect to 1 or 4 lives
+* each 'peer client' can disconnect from a match
+* at each point of a match, clients which are connected to this match, will receive datas (score, service...)
 * the 'peer client' may send a message to bet on the winner of the match
-* at the end of the match, 'peers client' receive a message containing the name of the winner
+* each time that one 'peer client' bet on a match, all others 'peers clients' which have bet on the same match, will receive a message with the total number of bettors
+* at the end of the match, 'peers client' receive a message containing the name of the winner and a specific message if they bet on this match
 
 *All messages are exchanged in JSON format* + 
 
