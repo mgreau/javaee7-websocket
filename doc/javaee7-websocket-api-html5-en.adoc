@@ -455,7 +455,8 @@ public class MatchEndpoint {
     	@Inject StarterService ejbService;
 
 	@OnOpen
-    	public void openConnection(Session session, @PathParam("match-id") String matchId) { // <4>
+    	public void openConnection(Session session, 
+    					@PathParam("match-id") String matchId) { // <4>
             logger.log(Level.INFO, "Session ID : " + session.getId() +" - Connection opened for match : " + matchId);
         	session.getUserProperties().put(matchId, true);
         	peers.add(session);
@@ -471,7 +472,6 @@ public class MatchEndpoint {
     	  if (Boolean.TRUE.equals(session.getUserProperties().get(matchId))){
 	        if (session.isOpen()){
 		      session.getBasicRemote().sendObject(msg);	// <5>
-		      logger.log(Level.INFO, "Score Sent: {0}", msg);
 	        }
     	  }
 	    }
@@ -479,11 +479,20 @@ public class MatchEndpoint {
 	    logger.log(Level.INFO, e.toString());
 	  }   
 	}
+	
+	public static void sendBetMessage(Session session, BetMessage betMsg, String matchId) {
+            try {
+                  betMsg.setNbBets(nbBetsByMatch.get(matchId).get());
+                  session.getBasicRemote().sendObject(betMsg);
+            	  logger.log(Level.INFO, "BetMsg Sent: {0}", betMsg.toString());
+            } catch (IOException | EncodeException e) {
+            	  logger.log(Level.SEVERE, e.toString());
+            }   
+    	}
 
 	@OnMessage
     	public void message(final Session session, BetMessage msg,  
     					@PathParam("match-id") String matchId) {
-        logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
 	        session.getUserProperties().put("bet", msg.getWinner());
 	        
 	        //Send betMsg with bet count
@@ -503,7 +512,6 @@ public class MatchEndpoint {
             }
 	    /* Remove this connection from the queue */
             peers.remove(session);
-            logger.log(Level.INFO, "Connection closed.");
        }
 ...
 }
