@@ -634,7 +634,7 @@ To find out which browsers are compatible with *WebSocket API* http://caniuse.co
 As we saw on the beginning of this post, the version to handle severals matches is developed with AngularJS on the client side.
 So there are 3 JS files : 
 
-* app.js : just deifne the 'tennisApp' angular application
+* app.js : just define the 'tennisApp' angular application
 * controllers.js : the TournamentCtrl controller
 * services.js :
 ** MatchWebSocketService : to handle WebSocket lifecycle with callback 
