@@ -460,15 +460,15 @@ public class MatchEndpoint {
     	@Inject StarterService ejbService;
 
 	@OnOpen
-    	public void openConnection(Session session, 
-    					@PathParam("match-id") String matchId) { // <4>
-            logger.log(Level.INFO, "Session ID : " + session.getId() +" - Connection opened for match : " + matchId);
-        	session.getUserProperties().put(matchId, true);
-        	peers.add(session);
-       
-        	//Send live result for this match
-        	send(new MatchMessage(ejbService.getMatches().get(matchId)), matchId);
-    	}
+	public void openConnection(Session session, 
+					@PathParam("match-id") String matchId) { // <4>
+        logger.log(Level.INFO, "Session ID : " + session.getId() +" - Connection opened for match : " + matchId);
+    	session.getUserProperties().put(matchId, true);
+    	peers.add(session);
+   
+    	//Send live result for this match
+    	send(new MatchMessage(ejbService.getMatches().get(matchId)), matchId);
+	}
 
 	public static void send(MatchMessage msg, String matchId) {
 	  try {
@@ -486,38 +486,38 @@ public class MatchEndpoint {
 	}
 	
 	public static void sendBetMessage(Session session, BetMessage betMsg, String matchId) {
-            try {
-                  betMsg.setNbBets(nbBetsByMatch.get(matchId).get());
-                  session.getBasicRemote().sendObject(betMsg);
-            	  logger.log(Level.INFO, "BetMsg Sent: {0}", betMsg.toString());
-            } catch (IOException | EncodeException e) {
-            	  logger.log(Level.SEVERE, e.toString());
-            }   
-    	}
+        try {
+              betMsg.setNbBets(nbBetsByMatch.get(matchId).get());
+              session.getBasicRemote().sendObject(betMsg);
+        	  logger.log(Level.INFO, "BetMsg Sent: {0}", betMsg.toString());
+        } catch (IOException | EncodeException e) {
+        	  logger.log(Level.SEVERE, e.toString());
+        }   
+	}
 
 	@OnMessage
-    	public void message(final Session session, BetMessage msg,  
-    					@PathParam("match-id") String matchId) {
-	        session.getUserProperties().put("bet", msg.getWinner());
-	        
-	        //Send betMsg with bet count
-	        if (!nbBetsByMatch.containsKey(matchId)){
-	             nbBetsByMatch.put(matchId, new AtomicInteger());
-	        }
-	        nbBetsByMatch.get(matchId).incrementAndGet();
-	        sendBetMessages(null, matchId, false);
-    	}
-	
+	public void message(final Session session, BetMessage msg,    // <6>
+					@PathParam("match-id") String matchId) {
+        session.getUserProperties().put("bet", msg.getWinner());
+        
+        //Send betMsg with bet count
+        if (!nbBetsByMatch.containsKey(matchId)){
+             nbBetsByMatch.put(matchId, new AtomicInteger());
+        }
+        nbBetsByMatch.get(matchId).incrementAndGet();
+        sendBetMessages(null, matchId, false);
+	}
+
 	@OnClose
-    	public void closedConnection(Session session, 
-    	                                @PathParam("match-id") String matchId) {
-            if (session.getUserProperties().containsKey("bet")){
-                     nbBetsByMatch.get(matchId).decrementAndGet();
-                     sendBetMessages(null, matchId, false);
-            }
-	    /* Remove this connection from the queue */
-            peers.remove(session);
-       }
+	public void closedConnection(Session session, 
+	                                @PathParam("match-id") String matchId) {
+        if (session.getUserProperties().containsKey("bet")){
+                 nbBetsByMatch.get(matchId).decrementAndGet();
+                 sendBetMessages(null, matchId, false);
+        }
+    /* Remove this connection from the queue */
+        peers.remove(session);
+   }
 ...
 }
 

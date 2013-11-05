@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="generator" content="Asciidoctor 0.1.4.rc.1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS</title>
+<title>Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS on WildFly</title>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary { display: block; }
@@ -436,9 +436,12 @@ span.line-numbers { border-right: 1px solid #E5E5E5; color: #999; display: inlin
 </head>
 <body class="article">
 <div id="header">
-<h1>Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS</h1>
-<span id="author" class="author">Maxime Gréau - http://mgreau.com</span><br>
-<span id="revdate">2013-09-27</span>
+<h1>Java EE 7 and WebSocket API for Java (JSR 356) with AngularJS on WildFly</h1>
+<span id="author" class="author">Maxime Greau</span><br>
+<span id="email" class="email"><a href="mailto:contact@mgreau.com">contact@mgreau.com</a></span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">November 6, 2013</span>
+<br><span id="revremark">First English version</span>
 </div>
 <div id="content">
 <div id="preamble">
@@ -452,7 +455,7 @@ span.line-numbers { border-right: 1px solid #E5E5E5; color: #999; display: inlin
 <td class="content">
 <div class="title">Overview</div>
 <div class="paragraph">
-<p>This blog post describes the <strong><a href="http://jcp.org/en/jsr/detail?id=356">Java API for WebSocket Protocol (JSR 356)</a></strong> (which is one of four newest JSRs for the <strong><a href="http://jcp.org/en/jsr/detail?id=342">Java EE 7</a></strong> platform) and provides a concrete application deployed on WildFly 8 and <a href="http://wildfly-mgreau.rhcloud.com/usopen/">available online on OpenShift</a>.</p>
+<p>This blog post describes the <strong><a href="http://jcp.org/en/jsr/detail?id=356">Java API for WebSocket Protocol (JSR 356)</a></strong> (which is one of four newest JSRs for the <strong><a href="http://jcp.org/en/jsr/detail?id=342">Java EE 7</a></strong> platform) and provides a concrete application deployed on <a href="http://wildfly.org">WildFly 8</a> and <a href="http://wildfly-mgreau.rhcloud.com/usopen/matches.html">available online on OpenShift</a>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -460,7 +463,7 @@ span.line-numbers { border-right: 1px solid #E5E5E5; color: #999; display: inlin
 <p><a href="http://mgreau.com/doc/javaee7-api-websocket-html5-en.pdf">Download an English PDF version</a></p>
 </li>
 <li>
-<p>[FR] Ce post en version française est basée uniquement sur la démonstration avec l&#8217;API Javascript sans AngularJS <a href="http://mgreau.com/posts/2013/09/27/javaee7-api-websocket-html5.html">Version FR. HTML</a> or <a href="http://mgreau.com/doc/javaee7-api-websocket-html5.pdf">Version Fr PDF</a></p>
+<p>[FR] La version française (<a href="http://mgreau.com/posts/2013/09/27/javaee7-api-websocket-html5.html">HTML</a> ou <a href="http://mgreau.com/doc/javaee7-api-websocket-html5.pdf">PDF</a>) de ce post est basée uniquement sur la démonstration avec l&#8217;API Javascript sans AngularJS.</p>
 </li>
 </ul>
 </div>
@@ -482,7 +485,7 @@ span.line-numbers { border-right: 1px solid #E5E5E5; color: #999; display: inlin
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_java_ee_7_overview">Java EE 7 overview</a></li>
-<li><a href="#_demo_angularjs_html5_jsr_356_api_application_deployed_on_wildfly_8_openshift">DEMO : AngularJS HTML5/JSR-356 API application deployed on WildFly 8 (OpenShift)</a></li>
+<li><a href="#_demo_angularjs_html5_jsr_356_api_application_deployed_on_wildfly_8_openshift">DEMO : AngularJS - HTML5 / JSR-356 API application deployed on WildFly 8 (OpenShift)</a></li>
 <li><a href="#_websocket_ws_a_new_protocol_different_from_http">WebSocket (WS) : a new protocol different from HTTP</a></li>
 <li>
 <ul class="sectlevel2">
@@ -507,7 +510,8 @@ span.line-numbers { border-right: 1px solid #E5E5E5; color: #999; display: inlin
 <li><a href="#_maven_dependencies_for_java_ee_7_api">Maven dependencies for Java EE 7 API</a></li>
 <li><a href="#_add_server_endpoint">Add Server Endpoint</a></li>
 <li><a href="#_encodes_and_decodes_messages">Encodes and Decodes messages</a></li>
-<li><a href="#_html5_web_client">HTML5 Web Client</a></li>
+<li><a href="#_html5_web_client_single_match_index_html">HTML5 Web Client (single match - index.html)</a></li>
+<li><a href="#_angularjs_client_several_matches_matches_html">AngularJS Client (several matches - matches.html)</a></li>
 <li><a href="#_source_code_on_github">Source code on Github</a></li>
 <li><a href="#_build_and_deploy_the_war">Build and Deploy the WAR</a></li>
 </ul>
@@ -564,10 +568,10 @@ This version decorates previous versions with 3 main objectives :</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_demo_angularjs_html5_jsr_356_api_application_deployed_on_wildfly_8_openshift">DEMO : AngularJS HTML5/JSR-356 API application deployed on WildFly 8 (OpenShift)</h2>
+<h2 id="_demo_angularjs_html5_jsr_356_api_application_deployed_on_wildfly_8_openshift">DEMO : AngularJS - HTML5 / JSR-356 API application deployed on WildFly 8 (OpenShift)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you want to see right away what it looks like, you can access <code><a href="http://wildfly-mgreau.rhcloud.com/usopen/">the online application</a></code> whose code will be in part explained in this article.
+<p>If you want to see right away what it looks like, you can access <code><a href="http://wildfly-mgreau.rhcloud.com/usopen/matches.html">the online application</a></code> whose code will be in part explained in this article.
 It&#8217;s an application that give you the ability :</p>
 </div>
 <div class="ulist">
@@ -630,7 +634,7 @@ It&#8217;s an application that give you the ability :</p>
 </div>
 <div id="websocket_example" class="imageblock">
 <div class="content">
-<a class="image" href="http://wildfly-mgreau.rhcloud.com/usopen/"><img src="./img/websocket_wildfly_angularjs_tennis.png" alt="Implementation of WebSocket (Java API et Javascript API)"></a>
+<a class="image" href="http://wildfly-mgreau.rhcloud.com/usopen/matches.html"><img src="./img/websocket_wildfly_angularjs_tennis.png" alt="Implementation of WebSocket (Java API et Javascript API)"></a>
 </div>
 <div class="title">Figure 2. US Open Application  - Implementation of WebSocket (Java API et Javascript API)</div>
 </div>
@@ -712,7 +716,7 @@ It&#8217;s obvious that the "chat demo" is the one that first comes to mind to i
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong><code>handshake</code></strong></p>
+<p><strong><code>handshake</code> (open and close)</strong></p>
 </li>
 <li>
 <p><strong><code>data transfer</code></strong></p>
@@ -808,7 +812,7 @@ Upgrade:websocket <b>(2)</b></code></pre>
 The <strong>Data transfer</strong> can now begin, so the 2 peers can exchange messages in a bidirectionnal and full-duplex communication.</p>
 </div>
 <div class="paragraph">
-<p>As shown in the diagram named <strong>Figure 3</strong>, the <code>peer server</code> can send multiple messages (<em>in this example : 1 message to each point of the game</em>) without any <code>peer client</code> response and the peer client can also send messages at any time (<em>in this example : betting on the winner of the match</em>).
+<p>As shown in the diagram named <strong>Figure 3</strong>, the <code>peer server</code> can send multiple messages (<em>in this example : 1 message for each scored point, 1 message each time any user bet on this game and 1 message at the end of the match</em>) without any <code>peer client</code> response and the peer client can also send messages at any time (<em>in this example : betting on the winner of the match</em>).
 Each peer can send a specific message to close the connection.<br></p>
 </div>
 <div class="paragraph">
@@ -818,7 +822,7 @@ Each peer can send a specific message to close the connection.<br></p>
 <div class="sect2">
 <h3 id="_closing_handshake">Closing Handshake</h3>
 <div class="paragraph">
-<p>This phase can be initiated by both peer. A peer that want to close the communication need to send a close control frame and it will received a close control frame too as a response.</p>
+<p>This phase <strong>can be initiated by both peer</strong>. A peer that want to close the communication need to send a <strong>close control frame</strong> and it will received a close control frame too as a response.</p>
 </div>
 </div>
 </div>
@@ -1116,13 +1120,22 @@ In addition to the traditional management WebSocket lifecycle, the sending messa
 <div class="ulist">
 <ul>
 <li>
-<p>at each point of the match, <em>peers clients</em> receive data match (score, service&#8230;)</p>
+<p>each <em>peer client</em> can connect to 1 or 4 live matches</p>
+</li>
+<li>
+<p>each <em>peer client</em> can disconnect from a match</p>
+</li>
+<li>
+<p>at each point of a match, clients which are connected to this match will receive datas (score, service&#8230;)</p>
 </li>
 <li>
 <p>the <em>peer client</em> may send a message to bet on the winner of the match</p>
 </li>
 <li>
-<p>at the end of the match, <em>peers client</em> receive a message containing the name of the winner</p>
+<p>each time that one <em>peer client</em> bet on a match, all others <em>peers clients</em> which have bet on the same match, will receive a message with the total number of bettors</p>
+</li>
+<li>
+<p>at the end of the match, <em>peers client</em> receive a message containing the name of the winner and a specific message if they bet on this match</p>
 </li>
 </ul>
 </div>
@@ -1130,7 +1143,7 @@ In addition to the traditional management WebSocket lifecycle, the sending messa
 <p><strong>All messages are exchanged in JSON format</strong><br></p>
 </div>
 <div class="paragraph">
-<p>The project structure is as follows :</p>
+<p>The project layout is as follows :</p>
 </div>
 <div id="eg5-callouts" class="exampleblock">
 <div class="title">Example 5. Maven project structure</div>
@@ -1148,15 +1161,24 @@ In addition to the traditional management WebSocket lifecycle, the sending messa
          |- BetMessage.java
          |- MatchMessage.java
          |- Message.java
-      |- MatchEndpoint.java    <b>(4)</b>
-      |- StarterService.java   <b>(5)</b>
-      |- TennisMatch.java      <b>(6)</b>
+      |+ rest       <b>(4)</b>
+         |- RestApplication.java
+         |- TournamentREST.java
+      |- MatchEndpoint.java    <b>(5)</b>
+      |- StarterService.java   <b>(6)</b>
+      |- TennisMatch.java      <b>(7)</b>
 + src/main/resources
 + scr/main/webapp
    |+ css
    |+ images
+   |+ js
+      |+ matches    <b>(8)</b>
+         |- app.js
+         |- controllers.js
+         |- services.js
+      |- websocket.js  <b>(9)</b>
    |- index.html
-   |- websocket.js  <b>(7)</b>
+   |- matches.html
 pom.xml</code></pre>
 </div>
 </div>
@@ -1172,6 +1194,9 @@ pom.xml</code></pre>
 <p>POJOs to handle messages sent between peers</p>
 </li>
 <li>
+<p>REST endpoint to list all tournament&#8217;s matches</p>
+</li>
+<li>
 <p>The application WebSocket Server Endpoint (<em>peer server</em>)</p>
 </li>
 <li>
@@ -1181,7 +1206,10 @@ pom.xml</code></pre>
 <p>POJO to handle informations about the match</p>
 </li>
 <li>
-<p>File containing the implementation of Javascript API for WebSocket protocol to handle the client side of the communication</p>
+<p>AngularJS files to handle several matches (matches.html) with REST and WebSocket call</p>
+</li>
+<li>
+<p>File containing the implementation of Javascript API for WebSocket protocol to handle the client side of the communication for the simple case (index.html)</p>
 </li>
 </ol>
 </div>
@@ -1227,7 +1255,7 @@ pom.xml</code></pre>
 <div class="sect2">
 <h3 id="_add_server_endpoint">Add Server Endpoint</h3>
 <div class="paragraph">
-<p>This endpoint can receive messages about betting on the winner of the match and it can also send to <em>peers client</em> all informations about the course of the match.</p>
+<p>This endpoint can receive messages about betting on the winner of a match (identified by match-id) and it can also send to <em>peers client</em> all informations about the course of the match and bets.</p>
 </div>
 <div id="eg7-callouts" class="exampleblock">
 <div class="title">Example 7. Server Endpoint : MatchEndpoint.java</div>
@@ -1243,16 +1271,23 @@ pom.xml</code></pre>
 
         <span class="directive">private</span> <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">Logger</span> logger = <span class="predefined-type">Logger</span>.getLogger(<span class="string"><span class="delimiter">&quot;</span><span class="content">MatchEndpoint</span><span class="delimiter">&quot;</span></span>);
 
-        <span class="comment">/* Queue for all open WebSocket sessions */</span>
-        <span class="directive">static</span> <span class="predefined-type">Queue</span>&lt;Session&gt; queue = <span class="keyword">new</span> <span class="predefined-type">ConcurrentLinkedQueue</span>&lt;&gt;();
+             <span class="comment">/** All open WebSocket sessions */</span>
+            <span class="directive">static</span> <span class="predefined-type">Set</span>&lt;Session&gt; peers = <span class="predefined-type">Collections</span>.synchronizedSet(<span class="keyword">new</span> <span class="predefined-type">HashSet</span>&lt;Session&gt;());
+
+            <span class="comment">/** Handle number of bets by match */</span>
+            <span class="directive">static</span> <span class="predefined-type">Map</span>&lt;<span class="predefined-type">String</span>, <span class="predefined-type">AtomicInteger</span>&gt; nbBetsByMatch = <span class="keyword">new</span> <span class="predefined-type">ConcurrentHashMap</span>&lt;&gt;();
+
+            <span class="annotation">@Inject</span> StarterService ejbService;
 
         <span class="annotation">@OnOpen</span>
         <span class="directive">public</span> <span class="type">void</span> openConnection(Session session,
-                                <span class="annotation">@PathParam</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">match-id</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> matchId) {        <b>(4)</b>
-            <span class="comment">/* Register this connection in the queue */</span>
-            queue.add(session);
+                                        <span class="annotation">@PathParam</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">match-id</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> matchId) { <b>(4)</b>
+        logger.log(<span class="predefined-type">Level</span>.INFO, <span class="string"><span class="delimiter">&quot;</span><span class="content">Session ID : </span><span class="delimiter">&quot;</span></span> + session.getId() +<span class="string"><span class="delimiter">&quot;</span><span class="content"> - Connection opened for match : </span><span class="delimiter">&quot;</span></span> + matchId);
             session.getUserProperties().put(matchId, <span class="predefined-constant">true</span>);
-            logger.log(<span class="predefined-type">Level</span>.INFO, <span class="string"><span class="delimiter">&quot;</span><span class="content">Connection opened for game : </span><span class="delimiter">&quot;</span></span> + matchId);
+            peers.add(session);
+
+            <span class="comment">//Send live result for this match</span>
+            send(<span class="keyword">new</span> MatchMessage(ejbService.getMatches().get(matchId)), matchId);
         }
 
         <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> send(MatchMessage msg, <span class="predefined-type">String</span> matchId) {
@@ -1262,7 +1297,6 @@ pom.xml</code></pre>
               <span class="keyword">if</span> (<span class="predefined-type">Boolean</span>.TRUE.equals(session.getUserProperties().get(matchId))){
                 <span class="keyword">if</span> (session.isOpen()){
                       session.getBasicRemote().sendObject(msg);        <b>(5)</b>
-                      logger.log(<span class="predefined-type">Level</span>.INFO, <span class="string"><span class="delimiter">&quot;</span><span class="content">Score Sent: {0}</span><span class="delimiter">&quot;</span></span>, msg);
                 }
               }
             }
@@ -1271,11 +1305,39 @@ pom.xml</code></pre>
           }
         }
 
-        <span class="annotation">@OnMessage</span>
-        <span class="directive">public</span> <span class="type">void</span> message(<span class="directive">final</span> Session session, BetMessage msg) {        <b>(6)</b>
-            logger.log(<span class="predefined-type">Level</span>.INFO, <span class="string"><span class="delimiter">&quot;</span><span class="content">Received: Bet Match Winner - {0}</span><span class="delimiter">&quot;</span></span>, msg.getWinner());
-            session.getUserProperties().put(<span class="string"><span class="delimiter">&quot;</span><span class="content">betMatchWinner</span><span class="delimiter">&quot;</span></span>, msg);
+        <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> sendBetMessage(Session session, BetMessage betMsg, <span class="predefined-type">String</span> matchId) {
+        <span class="keyword">try</span> {
+              betMsg.setNbBets(nbBetsByMatch.get(matchId).get());
+              session.getBasicRemote().sendObject(betMsg);
+                  logger.log(<span class="predefined-type">Level</span>.INFO, <span class="string"><span class="delimiter">&quot;</span><span class="content">BetMsg Sent: {0}</span><span class="delimiter">&quot;</span></span>, betMsg.toString());
+        } <span class="keyword">catch</span> (<span class="exception">IOException</span> | EncodeException e) {
+                  logger.log(<span class="predefined-type">Level</span>.SEVERE, e.toString());
         }
+        }
+
+        <span class="annotation">@OnMessage</span>
+        <span class="directive">public</span> <span class="type">void</span> message(<span class="directive">final</span> Session session, BetMessage msg,    <b>(6)</b>
+                                        <span class="annotation">@PathParam</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">match-id</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> matchId) {
+        session.getUserProperties().put(<span class="string"><span class="delimiter">&quot;</span><span class="content">bet</span><span class="delimiter">&quot;</span></span>, msg.getWinner());
+
+        <span class="comment">//Send betMsg with bet count</span>
+        <span class="keyword">if</span> (!nbBetsByMatch.containsKey(matchId)){
+             nbBetsByMatch.put(matchId, <span class="keyword">new</span> <span class="predefined-type">AtomicInteger</span>());
+        }
+        nbBetsByMatch.get(matchId).incrementAndGet();
+        sendBetMessages(<span class="predefined-constant">null</span>, matchId, <span class="predefined-constant">false</span>);
+        }
+
+        <span class="annotation">@OnClose</span>
+        <span class="directive">public</span> <span class="type">void</span> closedConnection(Session session,
+                                        <span class="annotation">@PathParam</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">match-id</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> matchId) {
+        <span class="keyword">if</span> (session.getUserProperties().containsKey(<span class="string"><span class="delimiter">&quot;</span><span class="content">bet</span><span class="delimiter">&quot;</span></span>)){
+                 nbBetsByMatch.get(matchId).decrementAndGet();
+                 sendBetMessages(<span class="predefined-constant">null</span>, matchId, <span class="predefined-constant">false</span>);
+        }
+    <span class="comment">/* Remove this connection from the queue */</span>
+        peers.remove(session);
+   }
 ...
 }</code></pre>
 </div>
@@ -1342,9 +1404,9 @@ In the example below, it&#8217;s the <strong>encoder</strong> for MatchMessage P
 </div>
 </div>
 <div class="sect2">
-<h3 id="_html5_web_client">HTML5 Web Client</h3>
+<h3 id="_html5_web_client_single_match_index_html">HTML5 Web Client (single match - index.html)</h3>
 <div class="paragraph">
-<p>The single HTML page of this application loads the <strong>websocket.js</strong> file to implement the Javascript WebSocket API and thus interact with the Java Server Endpoint.</p>
+<p>The index.html page of this application loads the <strong>websocket.js</strong> file to implement the Javascript WebSocket API and thus interact with the Java Server Endpoint. This page handle only one single match.</p>
 </div>
 <div id="eg9-callouts" class="exampleblock">
 <div class="title">Example 9. API Javascript implemented into websocket.js</div>
@@ -1436,12 +1498,56 @@ In the example below, it&#8217;s the <strong>encoder</strong> for MatchMessage P
 </div>
 </div>
 <div class="sect2">
+<h3 id="_angularjs_client_several_matches_matches_html">AngularJS Client (several matches - matches.html)</h3>
+<div class="paragraph">
+<p>As we saw on the beginning of this post, the version to handle severals matches is developed with AngularJS on the client side.
+So there are 3 JS files :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>app.js : just define the <em>tennisApp</em> angular application</p>
+</li>
+<li>
+<p>controllers.js : the TournamentCtrl controller</p>
+</li>
+<li>
+<p>services.js :</p>
+<div class="ulist">
+<ul>
+<li>
+<p>MatchWebSocketService : to handle WebSocket lifecycle with callback</p>
+</li>
+<li>
+<p>TournamentRESTService : to get all matches from REST Endpoint server</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This post is not a tutorial about AngularJS since it&#8217;s my first sample with this framework. But it was a quick solution to handle several matches on the client side.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_source_code_on_github">Source code on Github</h3>
 <div class="paragraph">
 <p>You can <strong>fork this project on Github</strong> at <code><strong><a href="https://github.com/mgreau/javaee7-websocket">https://github.com/mgreau/javaee7-websocket</a></strong></code></p>
 </div>
 <div class="paragraph">
-<p>This sample application is very basic, there could be many improvements like : managing a tournament with several games, betting on other criteria, see betting of other users in live&#8230;</p>
+<p>This sample application is basic, there could be many improvements like betting on other criteria&#8230;</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1504,7 +1610,17 @@ In the example below, it&#8217;s the <strong>encoder</strong> for MatchMessage P
 </div>
 </div>
 <div class="paragraph">
-<p>The usopen application is then available at : <a href="http://localhost:8080/usopen/">http://localhost:8080/usopen/</a></p>
+<p>The usopen application is then available at :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://localhost:8080/usopen/">http://localhost:8080/usopen/</a> for the simple case with only native Javascript</p>
+</li>
+<li>
+<p><a href="http://localhost:8080/usopen/matches">http://localhost:8080/usopen/matches</a> for the version with severals matches and AngularJS</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1608,7 +1724,8 @@ Today all <strong>standards are completed or about to be</strong>, this new tech
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2013-11-05 01:07:56 CET
+Version 1.0<br>
+Last updated 2013-11-05 17:12:32 CET
 </div>
 </div>
 </body>
