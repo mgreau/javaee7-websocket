@@ -435,7 +435,7 @@ pom.xml
 
 === Add Server Endpoint
 
-This endpoint can receive messages about betting on the winner of the match and it can also send to 'peers client' all informations about the course of the match.
+This endpoint can receive messages about betting on the winner of a match (identified by match-id) and it can also send to 'peers client' all informations about the course of the match and bets.
 
 [[eg7-callouts]]
 .Server Endpoint : MatchEndpoint.java
@@ -564,7 +564,7 @@ public class MatchMessageEncoder implements Encoder.Text<MatchMessage> {
 ====
 
 === HTML5 Web Client (single match - index.html)
-The single HTML page of this application loads the *websocket.js* file to implement the Javascript WebSocket API and thus interact with the Java Server Endpoint.
+The index.html page of this application loads the *websocket.js* file to implement the Javascript WebSocket API and thus interact with the Java Server Endpoint. This page handle only one single match.
 
 [[eg9-callouts]]
 .API Javascript implemented into websocket.js
@@ -631,14 +631,24 @@ To find out which browsers are compatible with *WebSocket API* http://caniuse.co
 ====
 
 === AngularJS Client (several matches - matches.html)
-As we saw on the beginning of this post, there is a version with AngularJS. 
+As we saw on the beginning of this post, the version to handle severals matches is developed with AngularJS on the client side.
+So there are 3 JS files : 
 
-NOTE: This post is not a tutorial about AngularJS since it's my first experience with this framework, so the
+* app.js : just deifne the 'tennisApp' angular application
+* controllers.js : the TournamentCtrl controller
+* services.js :
+** MatchWebSocketService : to handle WebSocket lifecycle with callback 
+** TournamentRESTService : to get all matches from REST Endpoint server
+
+[NOTE]
+====
+This post is not a tutorial about AngularJS since it's my first sample with this framework. But it was a quick solution to handle several matches on the client side.
+====
 
 === Source code on Github
 You can *fork this project on Github* at +*https://github.com/mgreau/javaee7-websocket*+
 
-This sample application is very basic, there could be many improvements like : managing a tournament with several games, betting on other criteria, see betting of other users in live...
+This sample application is basic, there could be many improvements like betting on other criteria...
 
 [TIP]
 ====
@@ -668,7 +678,10 @@ If your application server is WildFly, you can quickly deploy the WAR with the c
 mvn jboss-as:deploy
 --
 
-The usopen application is then available at : http://localhost:8080/usopen/
+The usopen application is then available at : 
+
+* http://localhost:8080/usopen/ for the simple case with only native Javascript
+* http://localhost:8080/usopen/matches for the version with severals matches and AngularJS
 
 == Benchmark : WebSocket VS REST
 In order to have some metrics about the performance of this new protocol, Arun Gupta has developed https://github.com/arun-gupta/javaee7-samples/tree/master/websocket/websocket-vs-rest[an application that allows compare the execution time of] the same treatment performed by WebSocket code and REST code.
