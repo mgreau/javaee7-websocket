@@ -176,7 +176,7 @@ Upgrade:websocket <2>
 Once the *handshake* is approved, the use of WebSocket protocol is established. There are an open connection on the 'peer server side' as well on the 'peer client side', callback handlers are called to initiate the communication. + 
 The *Data transfer* can now begin, so the 2 peers can exchange messages in a bidirectionnal and full-duplex communication.
 
-As shown in the diagram named *Figure 3*, the +peer server+ can send multiple messages ('in this example : 1 message to each point of the game, 1 message each time any user bet on this game and 1 message at the end of the match') without any +peer client+ response and the peer client can also send messages at any time ('in this example : betting on the winner of the match').
+As shown in the diagram named *Figure 3*, the +peer server+ can send multiple messages ('in this example : 1 message for each scored point, 1 message each time any user bet on this game and 1 message at the end of the match') without any +peer client+ response and the peer client can also send messages at any time ('in this example : betting on the winner of the match').
 Each peer can send a specific message to close the connection. +
 
 With Java EE7 Platform, the +peer server side+ code is written in *Java* while the +peer client side+ code is in *Java or Javascript*.
@@ -346,7 +346,7 @@ c.connectToServer(HelloClient.class, "hello");
 The sample application is deployed as a WAR outcome of a build with Apache Maven.
 In addition to the traditional management WebSocket lifecycle, the sending messages workflow is as follows :
 
-* each 'peer client' can connect to 1 or 4 lives
+* each 'peer client' can connect to 1 or 4 live matches
 * each 'peer client' can disconnect from a match
 * at each point of a match, clients which are connected to this match, will receive datas (score, service...)
 * the 'peer client' may send a message to bet on the winner of the match
@@ -355,7 +355,7 @@ In addition to the traditional management WebSocket lifecycle, the sending messa
 
 *All messages are exchanged in JSON format* + 
 
-The project structure is as follows :
+The project layout is as follows :
 
 [[eg5-callouts]]
 .Maven project structure
@@ -373,19 +373,22 @@ The project structure is as follows :
          |- BetMessage.java
          |- MatchMessage.java
          |- Message.java
-      |- MatchEndpoint.java    // <4>
-      |- StarterService.java   // <5>
-      |- TennisMatch.java      // <6>
+      |+ rest       // <4>
+         |- RestApplication.java
+         |- TournamentREST.java
+      |- MatchEndpoint.java    // <5>
+      |- StarterService.java   // <6>
+      |- TennisMatch.java      // <7>
 + src/main/resources
 + scr/main/webapp
    |+ css
    |+ images   
    |+ js
-      |+ matches    // <7>
+      |+ matches    // <8>
          |- app.js
          |- controllers.js
          |- services.js
-      |- websocket.js  // <8>
+      |- websocket.js  // <9>
    |- index.html   
    |- matches.html
 pom.xml		
@@ -393,11 +396,12 @@ pom.xml
 <1> Decode JSON messages sent from the 'peer client' (about bet on the winner) to a POJO ('BetMessage')
 <2> Encode in JSON format (via JSON-P), all messages about the winner and the match details for 'peers clients'
 <3> POJOs to handle messages sent between peers 
-<4> The application WebSocket Server Endpoint ('peer server')
-<5> EJB @Startup in order to initialize this application at deployment time
-<6> POJO to handle informations about the match
-<7> AngularJS files to handle several matches (matches.html) with REST and WebSocket call
-<8> File containing the implementation of Javascript API for WebSocket protocol to handle the client side of the communication for the simple case (index.html)
+<4> REST endpoint to list all tournament's matches
+<5> The application WebSocket Server Endpoint ('peer server')
+<6> EJB @Startup in order to initialize this application at deployment time
+<7> POJO to handle informations about the match
+<8> AngularJS files to handle several matches (matches.html) with REST and WebSocket call
+<9> File containing the implementation of Javascript API for WebSocket protocol to handle the client side of the communication for the simple case (index.html)
 ====
 
 === Maven dependencies for Java EE 7 API
