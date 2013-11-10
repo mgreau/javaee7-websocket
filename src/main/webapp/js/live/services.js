@@ -11,7 +11,7 @@ app.factory('WebSocketService', function($window) {
 		}
 		
 		var appPath = $window.location.pathname.split('/')[1];
-		var host = 'localhost';
+		var host = $window.location.hostname;
 		var port = "8000";
 		var protocol = "ws";
 		if (angular.equals(host, 'localhost') ){
