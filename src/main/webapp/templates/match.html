@@ -1,0 +1,30 @@
+<table class="table" >
+<thead>
+	<tr>
+		<th colspan="2" align="center">
+		</th>
+		<th>Bet</th><th>Pts</th><th>G</th>
+		<th colspan="3" align="center"><small><em>Finished Sets</em></small></th>
+	</tr>
+</thead>
+<tbody>
+	<tr ng-repeat="player in theMatch.players">
+		<td>
+			<img  alt=" {{player.name}}" src="img/{{splitForImage(player.name,0)}}.jpg">
+		</td>
+		<td> {{player.name}} <br/><img src="img/blank.gif" class="flag flag-{{player.country}}" /></td>
+		<td> 
+			<input name="bet" type="radio" ng-show="betOnTheMatch == false" ng-click="betOn(theMatchId, player.name)" >
+			<span ng-show="betOnTheMatch == true && betOnWinnerName == player.name"  class="glyphicon glyphicon-star"></span>
+		</td>
+			<td class="active"><h5><span 
+			class="label label-danger">{{player.points}}</span></h5>
+			<span class="badge serve" ng-show="player.name == theMatch.serve">S</span>
+		</td>
+		<td><h4><span class="label label-warning">{{player.games}}</span></h4></td>
+		<td class="sets"><span ng-class="cssStyleForSet(player,1)">{{player.set1}}</span></td>
+		<td class="sets"><span ng-class="cssStyleForSet(player,2)">{{player.set2}}</span></td>
+		<td class="sets"><span ng-class="cssStyleForSet(player,3)">{{player.set3}}</span></td>
+	</tr>
+</tbody>
+</table>

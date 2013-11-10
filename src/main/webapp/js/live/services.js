@@ -1,4 +1,5 @@
-app.factory('MatchWebSocketService', function($window) {
+//Service to handle WebSocket protocol 
+app.factory('WebSocketService', function($window) {
 	
 	var service = {};
 	service.ws = new Object();
@@ -8,8 +9,9 @@ app.factory('MatchWebSocketService', function($window) {
 				&& service.ws[idMatch].readyState == WebSocket.OPEN) {
 			return;
 		}
+		
 		var appPath = $window.location.pathname.split('/')[1];
-		var host = $window.location.hostname;
+		var host = 'localhost';
 		var port = "8000";
 		var protocol = "ws";
 		if (angular.equals(host, 'localhost') ){
@@ -84,6 +86,7 @@ app.factory('MatchWebSocketService', function($window) {
 	return service;
 });
 
+
 app.factory('TournamentRESTService', function($http, $window) {
 	var appPath = $window.location.pathname.split('/')[1];
 	var myService = {
@@ -104,3 +107,32 @@ app.factory('TournamentRESTService', function($http, $window) {
 		  };
 	return myService;
 });
+
+app.factory('MatchesService', function($window, WebSocketService) {
+	var service = {};
+
+ 	service.whoIsTheWinner = function(match) {
+        if (angular.isUndefined(match.players)){
+                return null;
+        }
+        if (parseInt(match.players[0].sets) > 
+                        parseInt(match.players[1].sets)){
+            return match.players[0].name;
+        } else {
+            return match.players[1].name;                
+        }
+    };
+
+    return service;
+	
+});
+
+app.factory('BetsService', function($window, WebSocketService) {
+	var service = {};
+
+	service.betOnWinner = function(idMatch, player) {
+       WebSocketService.sendBetMatchWinner(idMatch, player);
+    };
+	return service;
+});
+

@@ -78,7 +78,6 @@ public class MatchEndpoint {
             		if (session.isOpen()){
             			if (session.getUserProperties().containsKey("bet")){
             				BetMessage betMsg = new BetMessage((String)session.getUserProperties().get("bet"));
-            				
             				if (isFinished){
 	            				if (winner != null 
 		            					&& winner.equals(betMsg.getWinner())){
@@ -119,15 +118,17 @@ public class MatchEndpoint {
     @OnMessage
     public void message(final Session session, BetMessage msg,  @PathParam("match-id") String matchId) {
         logger.log(Level.INFO, "Received: Bet Match Winner - {0}", msg.getWinner());
-        //save this bet
+        //check if the user had already bet and save this bet
+        boolean hasAlreadyBet = session.getUserProperties().containsKey("bet");
         session.getUserProperties().put("bet", msg.getWinner());
         
         //Send betMsg with bet count
-        //TODO : +1 pour nbBet
         if (!nbBetsByMatch.containsKey(matchId)){
         	nbBetsByMatch.put(matchId, new AtomicInteger());
         }
-        nbBetsByMatch.get(matchId).incrementAndGet();
+        if (!hasAlreadyBet){
+        	nbBetsByMatch.get(matchId).incrementAndGet();
+        }
         sendBetMessages(null, matchId, false);
     }
 
