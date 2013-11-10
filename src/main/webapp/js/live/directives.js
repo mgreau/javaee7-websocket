@@ -66,15 +66,11 @@ app.directive("msg", function(MatchesService){
                         } else if (angular.equals(newVal.result, "KO")){
                             scope.finalMessage = scope.finalMessage.concat("SORRY, you've lost your bet, try again :) ");
                             scope.typeAlert = "danger";
-                        } else {
-                        	//scope.finalMessage = MatchesService.whoIsTheWinner(scope.theMatchId) + scope.finalMessage;
-                        	scope.finalMessage = ("Next time, bet on a player to win :)");
-                        	scope.typeAlert = "info";
-                        }
+                        } 
                 	}
     			 } else {
-                	scope.finalMessage = MatchesService.whoIsTheWinner(scope.theMatchId) + scope.finalMessage;
-                	scope.finalMessage = scope.finalMessage.concat("Next time, bet on a player to win :)");
+                	//scope.finalMessage = MatchesService.whoIsTheWinner(scope.theMatchId) + scope.finalMessage;
+                	scope.finalMessage = ("Next time, bet on a player to win :)");
                 	scope.typeAlert = "info";
                 }
     		});
