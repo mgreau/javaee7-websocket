@@ -7,11 +7,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.TimerService;
 
 import com.mgreau.wildfly.websocket.messages.MatchMessage;
 
