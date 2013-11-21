@@ -18,8 +18,7 @@ import com.mgreau.wildfly.websocket.messages.MatchMessage;
 @Startup
 @Singleton
 public class StarterService {
-    /* Use the container's timer service */
-    @Resource TimerService tservice;
+
     private Random random;
     private Map<String, TennisMatch> matches = new ConcurrentHashMap<>();
     
