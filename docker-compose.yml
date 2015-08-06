@@ -1,0 +1,37 @@
+# Cache for Maven (.m2 repository)
+mavencache:
+  image: busybox
+  labels:
+      com.mgreau.wilfly.websocket: "Cache Maven"
+  volumes:
+   - ~/.m2:/root/.m2
+
+# Project Base
+mavenproject:
+  image: busybox
+  labels:
+      com.mgreau.wilfly.websocket: "Java sources"
+  volumes:
+   - .:/myproject
+
+mavenbuild:
+  image: vyolin/alpine-maven
+  labels:
+    com.mgreau.wilfly.websocket: "Build app"
+  command: mvn clean package -gs /root/.m2/settings.xml
+  volumes_from:
+   - mavencache
+   - mavenproject
+  working_dir: /myproject
+  environment:
+    MAVEN_OPTS: -Xshare:auto -Xms128M -Xmx1G -XX:MaxPermSize=256M
+
+
+wildflydeploy:
+  build: _docker/dev/appservers/.
+  labels:
+    com.mgreau.wilfly.websocket: "Deploy App"
+  ports:
+    - "8080:8080"
+  volumes:
+    - ./target:/opt/jboss/wildfly/standalone/deployments/
