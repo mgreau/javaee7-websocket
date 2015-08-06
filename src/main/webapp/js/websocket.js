@@ -3,7 +3,7 @@ var idMatch = '1234';
 
 var appPath = window.location.pathname.split('/')[1];
 var host = window.location.hostname;
-var port = "8000";
+var port = "8080";
 
 if (host == 'localhost') {
 	port = '8080';
