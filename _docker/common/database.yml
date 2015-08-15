@@ -1,0 +1,14 @@
+dbdata:
+  image: mysql:5.6
+  volumes:
+    - /var/lib/mysql
+
+dbserver:
+  image: mysql:5.6
+  volumes_from:
+    - dbdata
+  environment:
+    - MYSQL_ROOT_PASSWORD=mgreau
+    - MYSQL_DATABASE=tennistour
+    - MYSQL_USER=mgreau
+    - MYSQL_PASSWORD=javaee7
