@@ -1,3 +1,5 @@
+cache
+*.iml
 *.DS_Store
 .project
 .classpath
