@@ -2,79 +2,33 @@
 #  Backend
 #
 
-# Backend:: Cache for Maven (.m2 repository)
-mavencache:
+# Cache for Maven (.m2 repository)
+cache:
   image: busybox
-  labels:
-      com.mgreau.docker4dev.backend.cache.maven: "Cache Maven"
   volumes:
-   - ~/.m2:/root/.m2
+   - ./cache/.m2/repository:/root/.m2/repository
 
 # Backend:: Project CodeBase
-mavenproject:
+sources:
   image: busybox
-  labels:
-      com.mgreau.docker4dev.backend.sources.javaee7: "Java sources"
   volumes:
    - .:/myproject
 
 # Backend:: Build project
-mavenbuild:
-  image: vyolin/alpine-maven
-  labels:
-    com.mgreau.docker4dev.backend.build.javaee7: "Build app"
-  command: mvn clean package -gs /root/.m2/settings.xml -DfinalName=usopen
+build:
+  image: maven:3.2.3-jdk-8
+  command: mvn clean package -DfinalName=usopen
   volumes_from:
-   - mavencache
-   - mavenproject
+   - cache
+   - sources
   working_dir: /myproject
   environment:
-    MAVEN_OPTS: -Xshare:auto -Xms128M -Xmx1G -XX:MaxPermSize=256M
+    MAVEN_OPTS: -Xshare:auto -Xms128M -Xmx1G
 
 # Backend:: Run Backend
-wildflydeploy:
-  build: _docker/dev/appservers/.
-  labels:
-    com.mgreau.wilfly.websocket: "Deploy App"
+deploy:
+  build: .
   ports:
     - "8080:8080"
   volumes:
     - ./target/usopen/:/opt/jboss/wildfly/standalone/deployments/ROOT.war/
-
-#
-# Frontend
-#
-# Frontend:: Cache for Node (.node_modules repository)
-nodecache:
-  image: busybox
-  labels:
-      com.mgreau.docker4dev.frontend.cache.node: "Cache Node dependencies"
-  volumes:
-   - ~/.node_modules:/root/.node_modules
-
-bowercache:
-  image: busybox
-  labels:
-      com.mgreau.docker4dev.frontend.cache.bower: "Cache Bower dependencies"
-  volumes:
-   - ~/.bower_components:/root/.bower_components
-
-#To Build the frontend based on Angular and Material Design
-nodebuild:
-  build: _docker/dev/builds/frontend/
-  command: npm config set cache /root/.node_modules --global && npm install && bower install --config.storage.cache=/root/.bower_components
-  volumes:
-   - ./frontend:/data
-  volumes_from:
-    - nodecache
-    - bowercache
-  environment:
-    NODE_PATH: /root/.node_modules
-
-# Frontend:: Project CodeBase
-angularproject:
-  image: busybox
-  labels:
-      com.mgreau.docker4dev.websocket: "Web sources"
-  volumes:
-   - .:/myproject
