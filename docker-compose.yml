@@ -1,7 +1,3 @@
-#
-#  Backend
-#
-
 # Cache for Maven (.m2 repository)
 cache:
   image: busybox
@@ -24,11 +20,3 @@ build:
   working_dir: /myproject
   environment:
     MAVEN_OPTS: -Xshare:auto -Xms128M -Xmx1G
-
-# Backend:: Run Backend
-deploy:
-  build: .
-  ports:
-    - "8080:8080"
-  volumes:
-    - ./target/usopen/:/opt/jboss/wildfly/standalone/deployments/ROOT.war/
