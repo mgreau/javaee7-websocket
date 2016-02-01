@@ -19,19 +19,19 @@ public class StarterService {
 
     private Random random;
     private Map<String, TennisMatch> matches = new ConcurrentHashMap<>();
-    
+
     private static final Logger logger = Logger.getLogger("StarterService");
-    
+
     @PostConstruct
     public void init() {
         logger.log(Level.INFO, "Initializing App.");
         random = new Random();
-        matches.put("1234", new TennisMatch("1234", "ROLLAND GARROS - QUARTER FINALS", "Ferrer D.", "es", "Almagro N.", "es"));
+        matches.put("1234", new TennisMatch("1234", "US OPEN - QUARTER FINALS", "Ferrer D.", "es", "Almagro N.", "es"));
         matches.put("1235", new TennisMatch("1235", "US OPEN - QUARTER FINALS", "Djokovic N.", "rs", "Berdych T.", "cz"));
         matches.put("1236", new TennisMatch("1236", "US OPEN - QUARTER FINALS", "Murray A.", "gb", "Chardy J.", "fr"));
         matches.put("1237", new TennisMatch("1237", "US OPEN - QUARTER FINALS", "Federer R.", "ch", "Tsonga J.W.", "fr"));
     }
-    
+
     @Schedule(second="*/3", minute="*",hour="*", persistent=false)
     public void play() {
     	for (Map.Entry<String,TennisMatch> match : matches.entrySet()){
@@ -53,7 +53,7 @@ public class StarterService {
         	}
     	}
     }
-    
+
     public Map<String, TennisMatch> getMatches(){
     	return matches;
     }

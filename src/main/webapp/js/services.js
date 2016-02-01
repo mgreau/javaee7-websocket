@@ -1,6 +1,6 @@
-//Service to handle WebSocket protocol 
+//Service to handle WebSocket protocol
 app.factory('WebSocketService', function($window) {
-	
+
 	var service = {};
 	service.ws = new Object();
 
@@ -9,19 +9,15 @@ app.factory('WebSocketService', function($window) {
 				&& service.ws[idMatch].readyState == WebSocket.OPEN) {
 			return;
 		}
-		
+
 		var appPath = "/";//$window.location.pathname.split('/')[1];
 		var host = $window.location.hostname;
-		var port = "8080";
+		var port = $window.location.port;
 		var protocol = "ws";
-		if (angular.equals(host, 'localhost') ){
-			port = '8080';
-		}
 		if (angular.equals($window.location.protocol,'https:')){
-			port = '8443';
 			protocol = "wss";
 		}
-			
+
 		var wsUrl = protocol + '://'+ host + ':'+ port + '/' + appPath + '/matches/' + idMatch;
 		var websocket = new WebSocket(wsUrl);
 
@@ -54,7 +50,7 @@ app.factory('WebSocketService', function($window) {
 	service.disconnect = function(idMatch) {
 		service.ws[idMatch].close();
 	};
-	
+
 	// WebSocket connection status
 	service.status = function(idMatch) {
 		if (service.ws == null || angular.isUndefined(service.ws[idMatch])){
@@ -62,7 +58,7 @@ app.factory('WebSocketService', function($window) {
 		}
 		return service.ws[idMatch].readyState;
 	};
-	
+
 	service.statusAsText = function(idMatch) {
 		var readyState = service.status(idMatch);
 		if (readyState == WebSocket.CONNECTING){
@@ -89,11 +85,12 @@ app.factory('WebSocketService', function($window) {
 
 app.factory('TournamentRESTService', function($http, $window) {
 	var appPath = $window.location.pathname.split('/')[1];
+	var urlRest = '/rest/tournament/lives';
 	var myService = {
 		    async: function() {
 		      // $http returns a promise, which has a then function, which
 				// also returns a promise
-		      var promise = $http.get('/'+ appPath + '/rest/tournament/lives').then(function (response) {
+		      var promise = $http.get(urlRest).then(function (response) {
 		        // The then function here is an opportunity to modify the
 				// response
 		        console.log(response);
@@ -115,16 +112,16 @@ app.factory('MatchesService', function($window, WebSocketService) {
         if (angular.isUndefined(match.players)){
                 return null;
         }
-        if (parseInt(match.players[0].sets) > 
+        if (parseInt(match.players[0].sets) >
                         parseInt(match.players[1].sets)){
             return match.players[0].name;
         } else {
-            return match.players[1].name;                
+            return match.players[1].name;
         }
     };
 
     return service;
-	
+
 });
 
 app.factory('BetsService', function($window, WebSocketService) {
@@ -135,4 +132,3 @@ app.factory('BetsService', function($window, WebSocketService) {
     };
 	return service;
 });
-
