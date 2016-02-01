@@ -10,7 +10,7 @@ app.factory('WebSocketService', function($window) {
 			return;
 		}
 		
-		var appPath = $window.location.pathname.split('/')[1];
+		var appPath = "/";//$window.location.pathname.split('/')[1];
 		var host = $window.location.hostname;
 		var port = "8080";
 		var protocol = "ws";
