@@ -1,5 +1,5 @@
-= WebSocket Java EE 7 - AngularJS - WildFly 8
-Maxime Gréaun <@mgreau>
+= WebSocket Java EE 7 - AngularJS - WildFly 10  Docker
+Maxime Gréau <@mgreau>
 :imagesdir: ./doc/img
 
 This project shows how to use the WebSocket Protocol with :
@@ -7,40 +7,38 @@ This project shows how to use the WebSocket Protocol with :
 * Java API for WebSocket (from Java EE 7 specifications)
 * WebSocket HTML 5 / Javascript API (from W3C)
 * AngularJS framework
-* deployed on WildFly 8.0.0-Beta1
+* Deployed on *WildFly 10.0.0.Final* on a Docker Container
+* Build with Maven in a *Docker* Container
 
-== Overview == 
-There are 2 samples :
+== Docker Way
 
-* the first one (/index.html) which handle *just one* match and uses *only native Javascript (client-side)*
-** online demo : http://wildfly-mgreau.rhcloud.com/usopen/
-** local access : http://localhost:8080/usopen/
+[source,bash]
+----
+$ docker-machine create --driver virtualbox javaee7-websocket
+$ eval $(docker-machine env javaee7-websocket)
+# Build the project with Maven
+$ docker-compose up
+# Deploy the app on WildFly in a Docker container
+$ docker-compose -f deploy.yml up
+$ open http://$(docker-machine ip javaee7-websocket)
+----
 
-image::html5_websocket_simple.png[Screenshot of the WebSocket Java EE 7 demo with a single match and native JS]
-
-* the second (/live.html) which is more complicated as it handles *several matches* and it uses *AngularJS client-side solution*
-** online demo : http://wildfly-mgreau.rhcloud.com/usopen/live.html
-** local access : http://localhost:8080/usopen/live.html
-
+.Multiple matches in live
 image::websocket_wildfly_angularjs_tennis.png[Screenshot of the WebSocket Java EE 7 demo with a severals matches and AngularJS deployed on WildFly]
 
 
-== Install on your WildFly 8 Application Server
-  
-. Clone this project :  
+== Install on your local WildFly 10 Application Server
+
+. Clone this project :
 
   git clone https://github.com/mgreau/javaee7-websocket
 
-. Start wildfly : 
+. Start wildfly :
 
    $JBOSS_HOME/bin/standalone.sh
-   
-. Build the war and deploy it automatically with maven : 
+
+. Build the war and deploy it automatically with maven :
 
    mvn clean package jboss-as:deploy
 
-. Launch your browser :
-
-   ** 1 match : http://localhost:8080/usopen/index.html
-   ** multiples matches : http://localhost:8080/usopen/live.html
-
+. Open your browser on http://localhost:8080/usopen/index.html
