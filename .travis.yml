@@ -1,0 +1,14 @@
+
+sudo: required
+
+language: java
+
+services:
+  - docker
+
+script:
+- docker-compose build
+
+notifications:
+  email:
+    - greau.maxime@gmail.com
