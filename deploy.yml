@@ -1,6 +1,6 @@
 # Backend:: Run Backend
 deploy:
-  build: .
+  build: Dockerfile.dev
   ports:
     - "80:8080"
   volumes:
