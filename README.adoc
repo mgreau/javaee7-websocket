@@ -4,7 +4,7 @@ Maxime Gréau <@mgreau>
 
 image:https://travis-ci.org/mgreau/javaee7-websocket.svg?branch=master["Build Status", link="https://travis-ci.org/mgreau/javaee7-websocket"]
 
-This project shows how to use the WebSocket Protocol with :
+This project shows how to use the WebSocket Protocol with:
 
 * Java API for WebSocket (from Java EE 7 specifications)
 * WebSocket HTML 5 / Javascript API (from W3C)
