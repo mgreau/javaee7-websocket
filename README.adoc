@@ -31,15 +31,15 @@ image::websocket_wildfly_angularjs_tennis.png[Screenshot of the WebSocket Java E
 
 == Install on your local WildFly 10 Application Server
 
-. Clone this project :
+. Clone this project:
 
   git clone https://github.com/mgreau/javaee7-websocket
 
-. Start wildfly :
+. Start wildfly:
 
    $JBOSS_HOME/bin/standalone.sh
 
-. Build the war and deploy it automatically with maven :
+. Build the war and deploy it automatically with maven:
 
    mvn clean package jboss-as:deploy
 
